@@ -29,6 +29,10 @@ Acesse o site oficial da **Sankhya** e faça o download do Navegador.
 Extraia o conteúdo do arquivo baixado e copie tudo para a pasta `Navegador_Sankhya` criada anteriormente.
 OBS: Copie o conteúdo inteiro de dentro da pasta e não a pasta que foi extraída.
 
+```bash
+sudo cp -r diretorio_do_arquivo_baixado /opt/Navegador_Sankhya/
+```
+
 ### 🔒 Dê Permissão de Execução
 
 ```bash
