@@ -33,17 +33,13 @@ OBS: Copie o conteúdo inteiro de dentro da pasta e não a pasta que foi extraí
 
 ```bash
 chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
+chmod +x /opt/Navegador_Sankhya/resources/app/webConnection/webConnection.jar
 ```
 
 ### 🖱️ Crie o Atalho do Navegador Sankhya
 
 ```bash
-nano ~/.local/share/applications/navegador-sankhya.desktop
-```
-
-Cole o conteúdo abaixo:
-
-```ini
+cat <<EOF | sudo tee /usr/share/applications/navegador-sankhya.desktop
 [Desktop Entry]
 Name=Navegador Sankhya
 Comment=Navegador Sankhya
@@ -53,9 +49,8 @@ Terminal=false
 Type=Application
 StartupNotify=true
 Categories=WebBrowser
+EOF
 ```
-
-✅ **Salve e feche o arquivo.** (no nano o atalho para salvar é CTRL + O, confirma e depois CTRL + X para sair). O atalho aparecerá no menu do sistema!
 
 ---
 
@@ -70,45 +65,51 @@ sudo apt install default-jdk
 ### 🛠️ Crie o Serviço do WebConnection
 
 ```bash
-sudo nano /etc/systemd/system/web-connection.service
-```
-
-Cole o conteúdo a baixo no arquivo criado anteriormente:
-
-```ini
+cat <<EOF | sudo tee /etc/systemd/system/web-connection.service
 [Unit]
-Description=Serviço de Conexão Sankhya WebConnection
+Description=Web Connection Navegador Sankhya
 After=network.target
 
 [Service]
-User=SEU_USUARIO
-ExecStart=/usr/bin/java -jar /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
+Type=simple
+ExecStart=/usr/bin/java -jar /opt/Navegador_Sankhya/resources/app/webConnection/webConnection.jar
 Restart=always
-RestartSec=5
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=web-connection-plugin
+User=root
 
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
 
-### 🔄 Recarregue o SystemD
+### 🔄 Recarrega, habilita e reinicia o serviço
 
 ```bash
 sudo systemctl daemon-reload
-```
-
-### ▶️ Inicie o Serviço
-
-```bash
-sudo systemctl start web-connection.service
+sudo systemctl enable web-connection
+sudo systemctl restart web-connection
 ```
 
 ### 🔍 Verifique o Status
 
 ```bash
 sudo systemctl status web-connection.service
+```
+
+### 🛠️ Ajusta permissões do atalho global
+```bash
+sudo chmod 644 /usr/share/applications/navegador-sankhya.desktop
+```
+
+### 🛠️ Atualiza base de ícones
+```bash
+sudo update-desktop-database
+```
+
+### 🛠️ Garante que usuários novos recebam o atalho na área de trabalho
+```bash
+sudo mkdir -p /etc/skel/Desktop
+sudo cp /usr/share/applications/navegador-sankhya.desktop /etc/skel/Desktop/
+sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 ```
 
 ---
