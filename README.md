@@ -16,7 +16,6 @@ Siga na ordem que não tem erro! 😉
 ### 📁 Crie uma pasta "Navegador_Sankhya" dentro de /opt
 
 ```bash
-cd ~/
 mkdir /opt/Navegador_Sankhya
 ```
 
