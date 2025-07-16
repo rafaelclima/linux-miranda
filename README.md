@@ -41,7 +41,7 @@ chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
 nano ~/.local/share/applications/navegador-sankhya.desktop
 ```
 
-Cole o conteúdo abaixo (troque `SEU_USUARIO` pelo usuário que você criou para a máquina em questão):
+Cole o conteúdo abaixo:
 
 ```ini
 [Desktop Entry]
@@ -73,7 +73,7 @@ sudo apt install default-jdk
 sudo nano /etc/systemd/system/web-connection.service
 ```
 
-Cole o conteúdo a baixo no arquivo criado anteriormente (troque `SEU_USUARIO` pelo usuário que você criou para a máquina em questão):
+Cole o conteúdo a baixo no arquivo criado anteriormente:
 
 ```ini
 [Unit]
