@@ -5,7 +5,7 @@ Este guia vai te ajudar a instalar e configurar o **Anduin OS**, ou outra distri
 Siga na ordem que não tem erro! 😉
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Logo" width="200" style="margin-right: 40px;"/>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Logo" width="200" style="margin-right: 140px;"/>
   <img src="https://lh3.googleusercontent.com/d/1gVGI0GgiIywENstJnNwp_kqD1DG3kNfv" alt="Logo Miranda" width="240"/>
 </p>
 
