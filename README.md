@@ -13,11 +13,11 @@ Siga na ordem que não tem erro! 😉
 
 ## 🗂️ 1) Instalação do Navegador Sankhya
 
-### 📁 Crie uma pasta "Navegador_Sankhya" na raiz do /home
+### 📁 Crie uma pasta "Navegador_Sankhya" dentro de /opt
 
 ```bash
 cd ~/
-mkdir Navegador_Sankhya
+mkdir /opt/Navegador_Sankhya
 ```
 
 ### 🌐 Baixe o Navegador Sankhya
@@ -33,7 +33,7 @@ OBS: Copie o conteúdo inteiro de dentro da pasta e não a pasta que foi extraí
 ### 🔒 Dê Permissão de Execução
 
 ```bash
-chmod +x ~/Navegador_Sankhya/execNavegadorSankhya
+chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
 ```
 
 ### 🖱️ Crie o Atalho do Navegador Sankhya
@@ -48,8 +48,8 @@ Cole o conteúdo abaixo (troque `SEU_USUARIO` pelo usuário que você criou para
 [Desktop Entry]
 Name=Navegador Sankhya
 Comment=Navegador Sankhya
-Exec=bash -c "cd /home/SEU_USUARIO/Navegador_Sankhya && ./execNavegadorSankhya"
-Icon=/home/SEU_USUARIO/Navegador_Sankhya/resources/icon.png
+Exec=bash -c "cd /opt/Navegador_Sankhya && ./execNavegadorSankhya"
+Icon=/opt/Navegador_Sankhya/resources/icon.png
 Terminal=false
 Type=Application
 StartupNotify=true
@@ -83,7 +83,7 @@ After=network.target
 
 [Service]
 User=SEU_USUARIO
-ExecStart=/usr/bin/java -jar /home/SEU_USUARIO/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
+ExecStart=/usr/bin/java -jar /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
 Restart=always
 RestartSec=5
 StandardOutput=syslog
