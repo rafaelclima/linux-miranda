@@ -17,7 +17,7 @@ Siga na ordem que não tem erro! 😉
 
 ```bash
 cd ~/
-mkdir ~/Navegador_Sankhya
+mkdir Navegador_Sankhya
 ```
 
 ### 🌐 Baixe o Navegador Sankhya
