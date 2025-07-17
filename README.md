@@ -37,7 +37,7 @@ sudo cp -r diretorio_do_arquivo_baixado /opt/Navegador_Sankhya/
 
 ```bash
 chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
-chmod +x /opt/Navegador_Sankhya/resources/app/webConnection/webConnection.jar
+chmod +x /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
 ```
 
 ### 🖱️ Crie o Atalho do Navegador Sankhya
