@@ -76,7 +76,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/java -jar /opt/Navegador_Sankhya/resources/app/webConnection/webConnection.jar
+ExecStart=/usr/bin/java -jar /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
 Restart=always
 User=root
 
