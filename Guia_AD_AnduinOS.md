@@ -57,7 +57,7 @@ nslookup berlim.miranda.br
 ## 📦 4️⃣ Instale pacotes necessários
 
 ```bash
-sudo apt install -y realmd sssd sssd-tools libnss-sss libpam-sss libpam-mount adcli samba-common-bin oddjob oddjob-mkhomedir packagekit krb5-user cifs-utils gvfs-backends gvfs-fuse gvfs-smb libpam-krb5
+sudo apt install -y realmd sssd sssd-tools libnss-sss libpam-sss libpam-mount adcli samba-common-bin oddjob oddjob-mkhomedir packagekit krb5-user cifs-utils gvfs-backends gvfs-fuse libpam-krb5
 ```
 
 ✅ Inclui tudo para:
