@@ -194,9 +194,9 @@ session optional                        pam_systemd.so
 
 # NÃO USE pam_mount se não quiser montar rede aqui
 # session optional pam_mount.so
-
-
 ```
+
+---
 
 ```bash
 sudo nano /etc/pam.d/common-auth
@@ -220,6 +220,7 @@ auth    required                        pam_permit.so
 auth    optional                        pam_cap.so
 
 ```
+---
 
 ```bash
 sudo nano /etc/pam.d/common-account
@@ -242,8 +243,9 @@ account sufficient                      pam_localuser.so
 
 # Verifica no SSSD (AD)
 account [default=bad success=ok user_unknown=ignore] pam_sss.so
-
 ```
+---
+
 Reinicie o serviço:
 ```bash
 sudo systemctl restart sssd
