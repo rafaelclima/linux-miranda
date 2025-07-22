@@ -208,7 +208,6 @@ Garanta que contém:
 # Autenticação: tenta local, depois SSSD, depois Kerberos
 auth    [success=2 default=ignore]      pam_unix.so nullok
 auth    [success=1 default=ignore]      pam_sss.so use_first_pass
-auth    [success=1 default=ignore]      pam_krb5.so use_first_pass
 
 # Se falhou, nega
 auth    requisite                       pam_deny.so
