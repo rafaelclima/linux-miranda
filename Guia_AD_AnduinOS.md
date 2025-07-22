@@ -265,7 +265,7 @@ if [ ! -f "$SHORTCUT" ]; then
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Dbclipper
+Name=Publico_Miranda
 Icon=folder-remote
 Exec=nautilus smb://berlim.miranda.br/Dbclipper
 Terminal=false
