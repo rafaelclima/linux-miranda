@@ -253,30 +253,7 @@ sudo systemctl restart sssd
 
 ---
 
-## 🔑 🔐 1️⃣0️⃣ Garanta geração automática do ticket Kerberos
-
-Edite `/etc/pam.d/common-auth`:
-
-```bash
-sudo nano /etc/pam.d/common-auth
-```
-
-Garanta:
-
-```conf
-auth [success=1 default=ignore] pam_sss.so use_first_pass
-auth [success=1 default=ignore] pam_krb5.so use_first_pass
-```
-
-E em `/etc/pam.d/common-session`:
-
-```bash
-session optional pam_krb5.so
-```
-
----
-
-## 🗂️ 1️⃣1️⃣ Crie o script de atalho `Dbclipper`
+## 🗂️ 1️⃣0 Crie o script de atalho `Dbclipper`
 
 📂 Crie `/usr/local/bin/cria_atalho_dbclipper.sh`:
 
@@ -318,7 +295,7 @@ sudo chmod +x /usr/local/bin/cria_atalho_dbclipper.sh
 
 ---
 
-## 🗂️ 1️⃣2️⃣ Rode o script no login
+## 🗂️ 1️⃣1️⃣ Rode o script no login
 
 Edite `/etc/skel/.profile`:
 
@@ -337,7 +314,7 @@ Assim, **todo novo usuário** terá o `.profile` que executa o script **automati
 
 ---
 
-## ✅ 1️⃣3️⃣ Teste tudo
+## ✅ 1️⃣2️⃣ Teste tudo
 
 1️⃣ Faça logout.  
 2️⃣ Logue com um usuário do AD.  
