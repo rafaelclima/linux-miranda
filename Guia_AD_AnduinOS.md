@@ -174,15 +174,27 @@ sudo nano /etc/pam.d/common-session
 Garanta que contém:
 
 ```conf
-session [default=1]                     pam_permit.so
-session requisite                       pam_deny.so
-session required                        pam_permit.so
-session optional                        pam_umask.so
-session required                        pam_unix.so
-session optional                        pam_sss.so
-session optional                        pam_mount.so
-session optional                        pam_systemd.so
+# Cria HOME do usuário automaticamente
 session required                        pam_mkhomedir.so skel=/etc/skel/ umask=0077
+
+# Umask
+session optional                        pam_umask.so
+
+# Sessão local Unix
+session required                        pam_unix.so
+
+# Sessão SSSD (AD)
+session optional                        pam_sss.so
+
+# Sessão Kerberos (gera TGT)
+session optional                        pam_krb5.so
+
+# Systemd user session
+session optional                        pam_systemd.so
+
+# NÃO USE pam_mount se não quiser montar rede aqui
+# session optional pam_mount.so
+
 
 ```
 
@@ -193,13 +205,20 @@ sudo nano /etc/pam.d/common-auth
 Garanta que contém:
 
 ```conf
+# Autenticação: tenta local, depois SSSD, depois Kerberos
 auth    [success=2 default=ignore]      pam_unix.so nullok
 auth    [success=1 default=ignore]      pam_sss.so use_first_pass
+auth    [success=1 default=ignore]      pam_krb5.so use_first_pass
 
+# Se falhou, nega
 auth    requisite                       pam_deny.so
+
+# Permite continuar se passou
 auth    required                        pam_permit.so
 
+# Opcional: capabilities Linux
 auth    optional                        pam_cap.so
+
 ```
 
 ```bash
@@ -209,12 +228,25 @@ sudo nano /etc/pam.d/common-account
 Garanta que contém:
 
 ```conf
+# Verifica conta local
 account [success=1 new_authtok_reqd=done default=ignore] pam_unix.so
+
+# Bloqueia se falhou
 account requisite                       pam_deny.so
+
+# Permite se passou
 account required                        pam_permit.so
-account required                        pam_unix.so
+
+# Local user
 account sufficient                      pam_localuser.so
+
+# Verifica no SSSD (AD)
 account [default=bad success=ok user_unknown=ignore] pam_sss.so
+
+```
+Reinicie o serviço:
+```bash
+sudo systemctl restart sssd
 ```
 
 ---
