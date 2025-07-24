@@ -127,6 +127,15 @@ session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
 
 ## 🔒 9️⃣ Configure PAM
 
+```conf
+# /etc/pam.d/common-auth
+auth    [success=1 default=ignore]      pam_unix.so nullok  
+auth    [success=2 default=ignore]      pam_krb5.so use_first_pass  
+auth    [success=1 default=ignore]      pam_sss.so use_first_pass  
+auth    requisite                       pam_deny.so  
+auth    required                        pam_permit.so
+```
+---
 
 ```conf
 # /etc/pam.d/common-auth
