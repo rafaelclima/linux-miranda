@@ -127,24 +127,75 @@ session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
 
 ## 🔒 9️⃣ Configure PAM
 
-``:
 
 ```conf
+# /etc/pam.d/common-auth
+
+# Primeiro tenta autenticar local (usuário local /etc/shadow)
 auth    [success=2 default=ignore] pam_unix.so nullok
+
+# Se local falhar, tenta pegar TGT do Kerberos usando mesma senha
+auth    [success=1 default=ignore] pam_krb5.so use_first_pass
+
+# Se Kerberos falhar, tenta resolver via SSSD (AD)
 auth    [success=1 default=ignore] pam_sss.so use_first_pass
+
+# Se tudo falhar, bloqueia
 auth    requisite pam_deny.so
+
+# Permite passar se algum módulo anterior aceitou
 auth    required pam_permit.so
+
+# Opcional — capabilities
 auth    optional pam_cap.so
+
+```
+---
+
+```conf
+# /etc/pam.d/common-session
+
+# Padrão do sistema
+session required pam_unix.so
+
+# Cria HOME automático com base no skel
+session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
+
+# Garante ticket Kerberos no session (opcional)
+session optional pam_krb5.so
+
+# Garante cache do SSSD
+session optional pam_sss.so
+
+# Outros módulos padrão
+session optional pam_systemd.so
+session optional pam_loginuid.so
+
 ```
 
-``:
+---
 
+✅ /etc/profile.d/auto-kinit.sh (opcional, extra-cautela)
+
+Crie:
+```bash
+sudo nano /etc/profile.d/auto-kinit.sh
+```
+
+Conteúdo:
 ```conf
-account [success=1 new_authtok_reqd=done default=ignore] pam_unix.so
-account requisite pam_deny.so
-account required pam_permit.so
-account sufficient pam_localuser.so
-account [default=bad success=ok user_unknown=ignore] pam_sss.so
+#!/bin/bash
+
+# Só para usuários do domínio, para não afetar user local
+if [[ "$USER" == *@MIRANDA.BR ]]; then
+  # Se não houver ticket TGT, pega agora
+  klist -s || kinit "$USER"
+fi
+```
+
+Permissão:
+```bash
+sudo chmod +x /etc/profile.d/auto-kinit.sh
 ```
 
 ## 🗂️ 🔟 Crie ponto de montagem
