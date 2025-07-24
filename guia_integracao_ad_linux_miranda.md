@@ -29,29 +29,17 @@ nameserver 192.168.10.241
 search miranda.br
 ```
 
-Teste resolução:
+Teste:
 
 ```bash
 nslookup berlim.miranda.br
 ```
-
----
 
 ## 📦 4️⃣ Instale pacotes necessários
 
 ```bash
 sudo apt install -y realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin oddjob oddjob-mkhomedir packagekit krb5-user cifs-utils gvfs-backends gvfs-fuse libpam-krb5 autofs
 ```
-✅ Inclui tudo para:
-
-realm (ingresso)
-sssd (cache + auth)
-krb5
-autofs (montagem automática)
-cifs-utils (SMB + Kerberos)
-gvfs (Nautilus smb://)
-
----
 
 ## 🔑 5️⃣ Configure o Kerberos
 
@@ -85,26 +73,16 @@ kinit Administrador@MIRANDA.BR
 klist
 ```
 
----
-
 ## 🏷️ 6️⃣ Ingressar no domínio
 
 ```bash
 sudo realm join --verbose --user=Administrador MIRANDA.BR
-```
-Verifique:
-```bash
 realm list
 ```
-
----
 
 ## ⚙️ 7️⃣ Configure o SSSD
 
 Edite `/etc/sssd/sssd.conf`:
-```bash
-sudo nano /etc/sssd/sssd.conf
-```
 
 ```ini
 [sssd]
@@ -132,31 +110,24 @@ Permissões:
 ```bash
 sudo chmod 600 /etc/sssd/sssd.conf
 sudo systemctl restart sssd
-```
-Teste resolução:
-```bash
 id almox@miranda.br
 ```
 
----
-
 ## 🏠 8️⃣ Criação automática de HOME
-Habilite:
+
 ```bash
 sudo pam-auth-update --enable mkhomedir
 ```
 
-Verifique `/etc/pam.d/common-session` -> deve conter:
+Verifique `/etc/pam.d/common-session`:
 
 ```conf
 session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
 ```
 
----
+## 🔒 9️⃣ Configure PAM
 
-## 🔒 9️⃣ Configure PAM para autenticação AD
-
-`/etc/pam.d/common-auth`:
+``:
 
 ```conf
 auth    [success=2 default=ignore] pam_unix.so nullok
@@ -166,7 +137,7 @@ auth    required pam_permit.so
 auth    optional pam_cap.so
 ```
 
-`/etc/pam.d/common-account`:
+``:
 
 ```conf
 account [success=1 new_authtok_reqd=done default=ignore] pam_unix.so
@@ -176,8 +147,6 @@ account sufficient pam_localuser.so
 account [default=bad success=ok user_unknown=ignore] pam_sss.so
 ```
 
----
-
 ## 🗂️ 🔟 Crie ponto de montagem
 
 ```bash
@@ -186,54 +155,36 @@ sudo chown root:root /mnt/Publico
 sudo chmod 755 /mnt/Publico
 ```
 
----
-
-## 🔄 1️⃣1️⃣ Configure autofs para montar Dbclipper
+## 🔄 1️⃣1️⃣ Configure autofs
 
 Edite `/etc/auto.master`:
-Adicione:
+
 ```conf
 /mnt/Publico  /etc/auto.dbclipper  --timeout=60 --ghost
 ```
 
 Crie `/etc/auto.dbclipper`:
-```bash
-sudo nano /etc/auto.dbclipper
-```
 
-Adicione:
 ```conf
 Dbclipper -fstype=cifs,sec=krb5,vers=3.0,cruid=%(UID) ://berlim/Dbclipper
 ```
 
-Reinicie e habilite:
+Reinicie:
 
 ```bash
 sudo systemctl restart autofs
 sudo systemctl enable autofs
 ```
 
----
-
-## ✅ 1️⃣2️⃣ Configure bashrc e Garanta que o Kerberos sempre use o cache certo
-
-Adicione no .bashrc do skeleton:
+## ✅ 1️⃣2️⃣ Configure bashrc
 
 Edite `/etc/skel/.bashrc`:
-```bash
-sudo nano /etc/skel/.bashrc
-```
 
-No final
 ```bash
 export KRB5CCNAME=/tmp/krb5cc_$(id -u)
 ```
 
----
-
-## 🏷️ 1️⃣3️⃣ Crie Script para atalho na Área de Trabalho
-
-Crie:
+## 🏷️ 1️⃣3️⃣ Crie script do atalho
 
 ```bash
 sudo nano /usr/local/bin/cria_atalho_dbclipper.sh
@@ -272,16 +223,10 @@ sudo chmod +x /usr/local/bin/cria_atalho_dbclipper.sh
 ## 🏷️ 1️⃣4️⃣ Execute script no login
 
 Edite `/etc/skel/.profile`:
-Adicione ao .profile do skeleton:
-```bash
-sudo nano /etc/skel/.profile
-```
 
-No final:
 ```bash
 /usr/local/bin/cria_atalho_dbclipper.sh
 ```
-Assim, todo novo HOME herda isso.
 
 ## ✅ 1️⃣5️⃣ Teste tudo
 
