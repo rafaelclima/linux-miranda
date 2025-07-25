@@ -126,63 +126,47 @@ session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
 ```
 
 ## 🔒 9️⃣ Configure PAM
-
-```conf
-# /etc/pam.d/common-auth
-auth    [success=1 default=ignore]      pam_unix.so nullok  
-auth    [success=2 default=ignore]      pam_krb5.so use_first_pass  
-auth    [success=1 default=ignore]      pam_sss.so use_first_pass  
-auth    requisite                       pam_deny.so  
-auth    required                        pam_permit.so
+```bash
+sudo nano /etc/pam.d/common-auth
 ```
----
 
+Deixe Assim:
 ```conf
-# /etc/pam.d/common-auth
+# Primeiro tenta autenticar local
+auth    [success=1 default=ignore] pam_unix.so nullok
 
-# Primeiro tenta autenticar local (usuário local /etc/shadow)
-auth    [success=2 default=ignore] pam_unix.so nullok
-
-# Se local falhar, tenta pegar TGT do Kerberos usando mesma senha
+# Se local falhar, tenta Kerberos usando mesma senha
 auth    [success=1 default=ignore] pam_krb5.so use_first_pass
 
-# Se Kerberos falhar, tenta resolver via SSSD (AD)
+# Se Kerberos falhar, tenta SSSD
 auth    [success=1 default=ignore] pam_sss.so use_first_pass
 
-# Se tudo falhar, bloqueia
+# Se tudo falhar, nega
 auth    requisite pam_deny.so
 
-# Permite passar se algum módulo anterior aceitou
+# Se algum sucesso, permite
 auth    required pam_permit.so
 
-# Opcional — capabilities
 auth    optional pam_cap.so
-
 ```
 ---
 
+```bash
+sudo nano /etc/pam.d/common-session
+```
+
+Deixe assim:
 ```conf
-# /etc/pam.d/common-session
-
-# Padrão do sistema
 session required pam_unix.so
-
-# Cria HOME automático com base no skel
-session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
-
-# Garante ticket Kerberos no session (opcional)
-session optional pam_krb5.so
-
-# Garante cache do SSSD
+session required pam_krb5.so
 session optional pam_sss.so
-
-# Outros módulos padrão
+session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
 session optional pam_systemd.so
 session optional pam_loginuid.so
-
 ```
 
 ---
+
 
 ✅ /etc/profile.d/auto-kinit.sh (opcional, extra-cautela)
 
@@ -202,9 +186,10 @@ if [[ "$USER" == *@MIRANDA.BR ]]; then
 fi
 ```
 
-Permissão:
+🔧 Ajustando permissões do auto-kinit.sh
 ```bash
 sudo chmod +x /etc/profile.d/auto-kinit.sh
+sudo chown root:root /etc/profile.d/auto-kinit.sh
 ```
 
 ## 🗂️ 🔟 Crie ponto de montagem
