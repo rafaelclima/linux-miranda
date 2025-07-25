@@ -132,22 +132,18 @@ sudo nano /etc/pam.d/common-auth
 
 Deixe Assim:
 ```conf
-# Primeiro tenta autenticar local
-auth    [success=1 default=ignore] pam_unix.so nullok
+# Tenta local
+auth    sufficient pam_unix.so nullok
 
-# Se local falhar, tenta Kerberos usando mesma senha
-auth    [success=1 default=ignore] pam_krb5.so use_first_pass
+# Se local falhar, tenta Kerberos
+auth    sufficient pam_krb5.so use_first_pass
 
 # Se Kerberos falhar, tenta SSSD
-auth    [success=1 default=ignore] pam_sss.so use_first_pass
+auth    sufficient pam_sss.so use_first_pass
 
-# Se tudo falhar, nega
+# Se tudo falhar, bloqueia
 auth    requisite pam_deny.so
 
-# Se algum sucesso, permite
-auth    required pam_permit.so
-
-auth    optional pam_cap.so
 ```
 ---
 
@@ -159,8 +155,8 @@ Deixe assim:
 ```conf
 session required pam_unix.so
 session required pam_krb5.so
-session optional pam_sss.so
 session required pam_mkhomedir.so skel=/etc/skel/ umask=0077
+session optional pam_sss.so
 session optional pam_systemd.so
 session optional pam_loginuid.so
 ```
