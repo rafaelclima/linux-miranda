@@ -193,7 +193,7 @@ sudo add-apt-repository -y ppa:emoraes25/cid
 sudo apt update && sudo apt -y install cid cid-gtk
 ```
 
-✅ Após o passo anterior, um atalho com o nome **CID** aparecerá no menu de programas do AnduinOS. Basta acessar e marcar o campo "join the domain" e seguir os passos que são bastante intuitivos. Ao fim será sugerido o reinicio da máquina, aceite e, após a máquina reiniciar já estará tudo pronto. A máquina já estará no domínio **miranda.br** e pronto para fazer login com os usuários da rede.
+✅ Após o passo anterior, um atalho com o nome **CID** aparecerá no menu de programas do AnduinOS. Basta acessar e marcar o campo "join the domain" e seguir os passos que são bastante intuitivos. Ao fim será sugerido o reinicio da máquina, aceite e, após a máquina reiniciar já estará tudo pronto. A máquina já estará no domínio **miranda.br** e pronta para fazer login com os usuários do AD.
 
 
 - Documentação:
