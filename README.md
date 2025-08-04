@@ -121,14 +121,12 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 🌐 3) Compartilhamento de Rede - Configuração para Todos os Usuários
 
 Esta etapa garante que todo novo usuário:
-
-    Monte automaticamente o compartilhamento smb://berlim/Dbclipper ao fazer login.
-
-    Tenha um atalho na área de trabalho para abrir essa pasta.
+- Monte automaticamente o compartilhamento smb://berlim/Dbclipper ao fazer login.
+- Tenha um atalho na área de trabalho para abrir essa pasta.
 
 🔄 1. Criar Autostart para Montagem do Compartilhamento
 
-´´´bash
+```bash
 sudo mkdir -p /etc/skel/.config/autostart
 
 cat <<EOF | sudo tee /etc/skel/.config/autostart/mount-dbclipper.desktop
@@ -141,12 +139,12 @@ X-GNOME-Autostart-enabled=true
 Name=Montar Dbclipper
 Comment=Montar compartilhamento de rede Dbclipper no login
 EOF
-´´´
+```
 
 
 🖥️ 2. Criar Atalho para Acesso Direto ao Compartilhamento
 
-´´´bash
+```bash
 sudo mkdir -p /etc/skel/Desktop
 
 cat <<EOF | sudo tee /etc/skel/Desktop/dbclipper.desktop
@@ -160,7 +158,7 @@ Type=Application
 EOF
 
 sudo chmod +x /etc/skel/Desktop/dbclipper.desktop
-´´´
+```
 
 ---
 
