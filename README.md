@@ -182,7 +182,24 @@ sudo apt install hplip
 
 ---
 
-#tutorial para ingresso no AD aqui
+## 💻 5) Ingressar a máquina no AD MIRANDA.BR
+
+✅ Iremos ingeressar a máquina no AD através do utilitário **CID**[Closed In Directory](https://cid-doc.github.io/)
+
+- Instalação:
+
+```bash
+sudo add-apt-repository -y ppa:emoraes25/cid
+sudo apt update && sudo apt -y install cid cid-gtk
+```
+
+✅ Após o passo anterior, um atalho com o nome **CID** aparecerá no menu de programas do AnduinOS. Basta acessar e marcar o campo "join the domain" e seguir os passos que são bastante intuitivos. Ao fim será sugerido o reinicio da máquina, aceite e, após a máquina reiniciar já estará tudo pronto. A máquina já estará no domínio **miranda.br** e pronto para fazer login com os usuários da rede.
+
+
+- Documentação:
+
+✅ Além da documentação oficial do **CID**[DOCUMENTAÇÃO OFICIAL](https://cid-doc.github.io/) existe também o canal do youtube do criador da ferramenta mostrando tudo a respeito do CID. **YOUTUBE**[PLAYLIST CID](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD&si=2dCdM6aP6NJwGFh6)
+
 
 ---
 
