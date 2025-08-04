@@ -132,11 +132,11 @@ sudo mkdir -p /etc/skel/.config/autostart
 cat <<EOF | sudo tee /etc/skel/.config/autostart/mount-dbclipper.desktop
 [Desktop Entry]
 Type=Application
-Exec=gio mount smb://berlim/Dbclipper
+Exec=gio mount smb://berlim/Dbclipper/PESSOAL
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
-Name=Montar Dbclipper
+Name=Montar Publico
 Comment=Montar compartilhamento de rede Dbclipper no login
 EOF
 ```
@@ -151,7 +151,7 @@ cat <<EOF | sudo tee /etc/skel/Desktop/dbclipper.desktop
 [Desktop Entry]
 Name=Publico_Miranda
 Comment=Abrir compartilhamento de rede Dbclipper
-Exec=gio open smb://berlim/Dbclipper
+Exec=gio open smb://berlim/Dbclipper/PESSOAL
 Icon=folder-remote
 Terminal=false
 Type=Application
