@@ -184,7 +184,7 @@ sudo apt install hplip
 
 ## 💻 5) Ingressar a máquina no AD MIRANDA.BR
 
-✅ Iremos ingeressar a máquina no AD através do utilitário **CID**[Closed In Directory](https://cid-doc.github.io/)
+✅ Iremos ingeressar a máquina no AD através do utilitário **CID** [Closed In Directory](https://cid-doc.github.io/)
 
 - Instalação:
 
@@ -198,7 +198,7 @@ sudo apt update && sudo apt -y install cid cid-gtk
 
 - Documentação:
 
-✅ Além da documentação oficial do **CID**[DOCUMENTAÇÃO OFICIAL](https://cid-doc.github.io/) existe também o canal do youtube do criador da ferramenta mostrando tudo a respeito do CID. **YOUTUBE**[PLAYLIST CID](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD&si=2dCdM6aP6NJwGFh6)
+✅ Além da documentação oficial do **CID** [DOCUMENTAÇÃO OFICIAL](https://cid-doc.github.io/) existe também o canal do youtube do criador da ferramenta mostrando tudo a respeito do CID. **YOUTUBE** [PLAYLIST CID](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD&si=2dCdM6aP6NJwGFh6)
 
 
 ---
