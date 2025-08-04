@@ -205,6 +205,15 @@ sudo apt update && sudo apt -y install cid cid-gtk
 
 ✅ Além da documentação oficial do **CID** [DOCUMENTAÇÃO OFICIAL](https://cid-doc.github.io/) existe também o canal do youtube do criador da ferramenta mostrando tudo a respeito da ferramenta. [YouTube CID](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD&si=2dCdM6aP6NJwGFh6)
 
+---
+
+## ✅ 6) Finalização
+
+- Após o reinicio da máquina, entre novamente no usuário Miranda e rode o comando a baixo para definir o nome da máquina que será propagado pela rede.
+
+```bash
+sudo hostnamectl set-hostname novo-nome-maquina
+```
 
 ---
 
