@@ -128,7 +128,9 @@ Esta etapa garante que todo novo usuário:
 
 ```bash
 sudo mkdir -p /etc/skel/.config/autostart
+```
 
+```bash
 cat <<EOF | sudo tee /etc/skel/.config/autostart/mount-dbclipper.desktop
 [Desktop Entry]
 Type=Application
@@ -145,8 +147,6 @@ EOF
 🖥️ 2. Criar Atalho para Acesso Direto ao Compartilhamento
 
 ```bash
-sudo mkdir -p /etc/skel/Desktop
-
 cat <<EOF | sudo tee /etc/skel/Desktop/dbclipper.desktop
 [Desktop Entry]
 Name=Publico_Miranda
@@ -156,7 +156,9 @@ Icon=folder-remote
 Terminal=false
 Type=Application
 EOF
+```
 
+```bash
 sudo chmod +x /etc/skel/Desktop/dbclipper.desktop
 ```
 
