@@ -189,7 +189,7 @@ sudo apt install hplip
 ✅ Iremos ingeressar a máquina no AD através do utilitário **CID** [Closed In Directory](https://cid-doc.github.io/)
 
 - Instalação:
-- 
+
 ```bash
 sudo add-apt-repository -y ppa:emoraes25/cid
 ```
