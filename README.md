@@ -118,13 +118,13 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ---
 
-🌐 3) Compartilhamento de Rede - Configuração para Todos os Usuários
+## 🌐 3) Compartilhamento de Rede - Configuração para Todos os Usuários
 
 Esta etapa garante que todo novo usuário:
 - Monte automaticamente o compartilhamento smb://berlim/Dbclipper ao fazer login.
 - Tenha um atalho na área de trabalho para abrir essa pasta.
 
-🔄 1. Criar Autostart para Montagem do Compartilhamento
+## 🔄 1. Criar Autostart para Montagem do Compartilhamento
 
 ```bash
 sudo mkdir -p /etc/skel/.config/autostart
@@ -144,7 +144,7 @@ EOF
 ```
 
 
-🖥️ 2. Criar Atalho para Acesso Direto ao Compartilhamento
+## 🖥️ 2. Criar Atalho para Acesso Direto ao Compartilhamento
 
 ```bash
 cat <<EOF | sudo tee /etc/skel/Desktop/dbclipper.desktop
@@ -160,6 +160,21 @@ EOF
 
 ```bash
 sudo chmod +x /etc/skel/Desktop/dbclipper.desktop
+```
+
+## 🖥️ 3. Criar Atalho para Acesso ao link dos ramais miranda
+
+```bash
+cat <<EOF | sudo tee /etc/skel/Desktop/ramais_miranda.desktop"
+[Desktop Entry]
+Name=Ramais Miranda
+Comment=Lista de Ramais da Empresa
+Exec=xdg-open http://192.168.54.2/ramais/
+Icon=internet-web-browser
+Terminal=false
+Type=Application
+Categories=Network;
+EOF
 ```
 
 ---
