@@ -199,7 +199,39 @@ sudo apt install hplip
 
 ---
 
-## 💻 5) Ingressar a máquina no AD MIRANDA.BR
+## 💻 5) Trocar Wyland para X11
+
+✅ Para uma melhor compatibilidade com alguns softwares, precisaremos alterar o [**Window Manager**](https://diolinux.com.br/editorial/xorg-e-wayland-o-que-sao.html) do AnduinOS para o Xorg. É bem simples, basta alterar a configuração mostrada a baixo:
+
+* Abra o arquivo de configuração do GDM:
+
+```bash
+sudo nano /etc/gdm3/custom.conf
+```
+
+* Encontre a seguinte linha no arquivo:
+
+```bash
+#WaylandEnable=false
+```
+
+* Descomente (remova o #) para que fique assim:
+
+```bash
+WaylandEnable=false
+```
+
+* Salve e saia (Ctrl + O, Enter, depois Ctrl + X)
+
+* Reinicie a máquina
+ 
+```bash
+sudo reboot
+```
+
+---
+
+## 💻 6) Ingressar a máquina no AD MIRANDA.BR
 
 ✅ Iremos ingeressar a máquina no AD através do utilitário **CID** [Closed In Directory](https://cid-doc.github.io/)
 
@@ -222,13 +254,14 @@ sudo apt update && sudo apt -y install cid cid-gtk
 
 ---
 
-## ✅ 6) Finalização
+## ✅ 7) Finalização
 
-- Após o reinicio da máquina, entre novamente no usuário Miranda e rode o comando a baixo para definir o nome da máquina que será propagado pela rede.
+- Após o reinicio da máquina, algumas configurações se fazem necessárias quando um usuário faz login, são elas:
 
-```bash
-sudo hostnamectl set-hostname novo-nome-maquina
-```
+✅ - Alterar as configurações de energia, para impedir da máquina entrar em suspensão automática;
+✅ - Configurar o teamviwer para prover acesso fácil ao time de TI e impedir o usuário de fechar o programa sem permissão ;
+✅ - Cadastrar a base de produção no Sankhya-Om
+✅ - Alterar localização no provedor de previsão do tempo (opcional).
 
 ---
 
