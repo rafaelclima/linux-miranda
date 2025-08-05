@@ -170,7 +170,7 @@ cat <<EOF | sudo tee /etc/skel/Desktop/ramais_miranda.desktop
 Name=Ramais Miranda
 Comment=Lista de Ramais da Empresa
 Exec=xdg-open http://192.168.54.2/ramais/
-Icon=internet-web-browser
+Icon=contacts-symbolic
 Terminal=false
 Type=Application
 Categories=Network;
@@ -258,10 +258,10 @@ sudo apt update && sudo apt -y install cid cid-gtk
 
 - Após o reinicio da máquina, algumas configurações se fazem necessárias quando um usuário faz login, são elas:
 
-✅ - Alterar as configurações de energia, para impedir da máquina entrar em suspensão automática;
-✅ - Configurar o teamviwer para prover acesso fácil ao time de TI e impedir o usuário de fechar o programa sem permissão ;
-✅ - Cadastrar a base de produção no Sankhya-Om
-✅ - Alterar localização no provedor de previsão do tempo (opcional).
+✅ Alterar as configurações de energia, para impedir da máquina entrar em suspensão automática;
+✅ Configurar o teamviwer para prover acesso fácil ao time de TI e impedir o usuário de fechar o programa sem permissão ;
+✅ Cadastrar a base de produção no Sankhya-Om
+✅ Alterar localização no provedor de previsão do tempo (opcional).
 
 ---
 
