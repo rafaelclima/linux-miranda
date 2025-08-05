@@ -165,7 +165,7 @@ sudo chmod +x /etc/skel/Desktop/dbclipper.desktop
 ## 🖥️ 3. Criar Atalho para Acesso ao link dos ramais miranda
 
 ```bash
-cat <<EOF | sudo tee /etc/skel/Desktop/ramais_miranda.desktop"
+cat <<EOF | sudo tee /etc/skel/Desktop/ramais_miranda.desktop
 [Desktop Entry]
 Name=Ramais Miranda
 Comment=Lista de Ramais da Empresa
