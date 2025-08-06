@@ -117,7 +117,7 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ## 🌐 3) Compartilhamento de Rede - Padrão para Usuários
 
-### 📝 Edite o arquivo `shares.xml` na pasta `\berlim\NETLOGON`
+### 📝 Edite o arquivo `shares.xml` na pasta `\berlim\NETLOGON\cid`
 
 Adicione o seguinte trecho, caso não exista:
 
