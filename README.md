@@ -120,6 +120,65 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ## 🌐 3) Compartilhamento de Rede - Configuração para Todos os Usuários
 
+**Configure o /etc/security/pam_mount.conf.xml**
+Edite esse arquivo:
+```bash
+sudo nano /etc/security/pam_mount.conf.xml
+```
+
+**Adicione uma linha <volume> dentro da tag <pam_mount> como esta:**
+```bash
+<volume
+    user="*"
+    fstype="cifs"
+    server="berlim"
+    path="Dbclipper/PESSOAL"
+    mountpoint="~/Dbclipper"
+    options="rw,iocharset=utf8,sec=ntlmssp,domain=MIRANDA.BR"
+/>
+```
+
+**Verifique se o PAM está chamando o pam_mount**
+Deixe seu /etc/pam.d/gdm-password (ou login, dependendo do display manager), dessa maneira:
+```bash
+#%PAM-1.0
+auth    requisite       pam_nologin.so
+auth    required        pam_succeed_if.so user != root quiet_success
+@include common-auth
+auth    optional        pam_gnome_keyring.so
+
+@include common-account
+
+# Montagens automáticas do pam_mount
+session required        pam_mount.so
+
+session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so close
+session required        pam_loginuid.so
+session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so open
+
+session optional        pam_keyinit.so force revoke
+session required        pam_limits.so
+session required        pam_env.so readenv=1
+session required        pam_env.so readenv=1 user_readenv=1 envfile=/etc/default/locale
+
+@include common-session
+
+session optional        pam_gnome_keyring.so auto_start
+
+@include common-password
+```
+
+**Deixar um atalho na área de trabalho para o usuário**
+Você pode deixar o .desktop no /etc/skel/Desktop/ com:
+```bash
+[Desktop Entry]
+Name=Dbclipper
+Exec=xdg-open ~/Dbclipper
+Icon=folder-remote
+Type=Application
+Terminal=false
+```
+
 Esta etapa garante que todo novo usuário:
 - Monte automaticamente o compartilhamento smb://berlim/Dbclipper ao fazer login.
 - Tenha um atalho na área de trabalho para abrir essa pasta.
