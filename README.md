@@ -1,8 +1,8 @@
 
 <h1 align="center">🚀 Guia Rápido de Instalação e Configuração - Anduin OS Miranda</h1>
 
-Este guia vai te ajudar a instalar e configurar o **Anduin OS**, ou outra distribuição linux baseada em debian, com o navegador Sankhya e alguns outros softwares essenciais.   
-Siga na ordem que não tem erro! 😉
+Este guia vai te ajudar a instalar e configurar o **Anduin OS**, ou qualquer outra distribuição Linux baseada em **Debian**, com o **Navegador Sankhya** e alguns outros softwares essenciais.  
+➡️ **Siga os passos na ordem correta para garantir o sucesso da configuração!** 😉
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Logo" width="200" style="margin-right: 140px;"/>
@@ -13,34 +13,33 @@ Siga na ordem que não tem erro! 😉
 
 ## 🗂️ 1) Instalação do Navegador Sankhya
 
-### 📁 Crie uma pasta "Navegador_Sankhya" dentro de /opt
+### 📁 Crie a pasta "Navegador_Sankhya" em `/opt`
 
 ```bash
-mkdir /opt/Navegador_Sankhya
+sudo mkdir /opt/Navegador_Sankhya
 ```
 
 ### 🌐 Baixe o Navegador Sankhya
 
-Acesse o site oficial da **Sankhya** e faça o download do Navegador.
-[Página de download do navegador Sankhya](https://downloads.sankhya.com.br/)
+Acesse o site oficial da Sankhya e faça o download do navegador:  
+🔗 [Página de Download do Navegador Sankhya](https://downloads.sankhya.com.br/)
 
-### 📦 Extraia e Copie
+### 📦 Extraia e copie os arquivos
 
-Extraia o conteúdo do arquivo baixado e copie tudo para a pasta `Navegador_Sankhya` criada anteriormente.
-OBS: Copie o conteúdo inteiro de dentro da pasta e não a pasta que foi extraída.
+Após extrair o conteúdo, copie **apenas os arquivos internos** (e não a pasta principal extraída) para a pasta de destino:
 
 ```bash
-sudo cp -r diretorio_do_arquivo_baixado /opt/Navegador_Sankhya/
+sudo cp -r diretorio_do_arquivo_baixado/* /opt/Navegador_Sankhya/
 ```
 
-### 🔒 Dê Permissão de Execução
+### 🔐 Dê permissões de execução
 
 ```bash
 chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
 chmod +x /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
 ```
 
-### 🖱️ Crie o Atalho do Navegador Sankhya
+### 🖱️ Crie um atalho para o Navegador Sankhya
 
 ```bash
 cat <<EOF | sudo tee /usr/share/applications/navegador-sankhya.desktop
@@ -60,13 +59,13 @@ EOF
 
 ## 🔗 2) Configuração do Serviço Web Connection
 
-### 🛠️ Instale o java
+### ☕ Instale o Java
 
 ```bash
 sudo apt install default-jdk
 ```
 
-### 🛠️ Crie o Serviço do WebConnection
+### 🧩 Crie o serviço systemd para o WebConnection
 
 ```bash
 cat <<EOF | sudo tee /etc/systemd/system/web-connection.service
@@ -85,7 +84,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### 🔄 Recarrega, habilita e reinicia o serviço
+### 🔄 Recarregue, habilite e inicie o serviço
 
 ```bash
 sudo systemctl daemon-reload
@@ -93,23 +92,21 @@ sudo systemctl enable web-connection
 sudo systemctl restart web-connection
 ```
 
-### 🔍 Verifique o Status
+### 🔍 Verifique o status do serviço
 
 ```bash
 sudo systemctl status web-connection.service
 ```
 
-### 🛠️ Ajusta permissões do atalho global
+### ⚙️ Ajuste permissões e atalho global
+
 ```bash
 sudo chmod 644 /usr/share/applications/navegador-sankhya.desktop
-```
-
-### 🛠️ Atualiza base de ícones
-```bash
 sudo update-desktop-database
 ```
 
-### 🛠️ Garante que usuários novos recebam o atalho na área de trabalho
+### 👥 Garante que novos usuários recebam o atalho
+
 ```bash
 sudo mkdir -p /etc/skel/Desktop
 sudo cp /usr/share/applications/navegador-sankhya.desktop /etc/skel/Desktop/
@@ -118,10 +115,12 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ---
 
-## 🌐 3) Compartilhamento de Rede - Configuração para Todos os Usuários
+## 🌐 3) Compartilhamento de Rede - Padrão para Usuários
 
-**Verifique a pasta cid dentro de \\berlim\NETLOGON**
-- Abra o arquivo shares.xml e adicione o seguinte código, caso não exista:
+### 📝 Edite o arquivo `shares.xml` na pasta `\berlim\NETLOGON`
+
+Adicione o seguinte trecho, caso não exista:
+
 ```xml
 <pam_mount>
     <volume
@@ -134,23 +133,18 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 </pam_mount>
 ```
 
-**Isso fará com que cada usuário do AD que fizer login na máquina tenha a pasta PESSOAL de \\berlim\Dbclipper\PESSOAL montada por padrão**
+🔒 Isso garantirá que a pasta pessoal seja montada automaticamente para todos os usuários do AD.
 
+### 🖱️ Crie o atalho para a pasta compartilhada
 
-**Deixar um atalho na área de trabalho para o usuário**
-
-*Crie um diretório para armazenar o atalho modelo:
 ```bash
 sudo mkdir -p /etc/Dbclipper
-```
-
-*Crie o arquivo modelo:
-```bash
 sudo nano /etc/Dbclipper/Dbclipper.template.desktop
 ```
 
-* Insira o seguinte conteúdo:
-``` bash
+Insira o seguinte conteúdo:
+
+```desktop
 [Desktop Entry]
 Name=Dbclipper
 Comment=Acesso à pasta Dbclipper
@@ -160,19 +154,20 @@ Terminal=false
 Type=Application
 Categories=Network;
 ```
-* Dê permissão de execução:
+
+Dê permissão de execução:
+
 ```bash
 sudo chmod +x /etc/Dbclipper/Dbclipper.template.desktop
-``` 
+```
 
-**Criar o script de login para gerar o atalho personalizado**
-* Crie o script:
+### ⚙️ Script de login para criar atalho personalizado
 
 ```bash
 sudo nano /etc/profile.d/copy_desktop_shortcut.sh
 ```
 
-* Cole o conteúdo a baixo:
+Conteúdo do script:
 
 ```bash
 #!/bin/bash
@@ -182,10 +177,8 @@ DESKTOP="$USER_HOME/Desktop"
 TARGET="$DESKTOP/Dbclipper.desktop"
 TEMPLATE="/etc/Dbclipper/Dbclipper.template.desktop"
 
-# Remove possíveis modelos que foram copiados via /etc/skel
 rm -f "$DESKTOP/Dbclipper.template.desktop"
 
-# Se o atalho ainda não existe, cria um novo baseado no template
 if [ ! -f "$TARGET" ]; then
     cp "$TEMPLATE" "$TARGET"
     sed -i "s|/home/USUARIO|/home/$USER|g" "$TARGET"
@@ -193,12 +186,15 @@ if [ ! -f "$TARGET" ]; then
 fi
 ```
 
-* Dê permissão de execução:
+Permissão de execução:
+
 ```bash
 sudo chmod +x /etc/profile.d/copy_desktop_shortcut.sh
 ```
 
-## 🖥️ 3. Criar Atalho para Acesso ao link dos ramais miranda
+---
+
+## 📞 4) Criar Atalho para Ramais Miranda
 
 ```bash
 cat <<EOF | sudo tee /etc/skel/Desktop/ramais_miranda.desktop
@@ -215,19 +211,17 @@ EOF
 
 ---
 
-## 💻 4) Programas Extras
+## 🧰 5) Programas Extras
 
-✅ **OnlyOffice:** Instale pela loja de aplicativos do sistema.
+✅ **OnlyOffice:** Instale pela loja de aplicativos do sistema.  
+✅ **Configurações da Impressora:** Também disponível pela loja.
 
-✅ **Definições da Impressora:** Instale pela loja.
+🧩 **TeamViewer Host:**  
+🔗 [Download TeamViewer Host](https://download.teamviewer.com/download/linux/teamviewer-host_amd64.deb)
 
-🔗 **TeamViewer Host:**  
-[Download TeamViewer Host](https://download.teamviewer.com/download/linux/teamviewer-host_amd64.deb)
+📦 Para instalar: basta dar dois cliques no arquivo `.deb` baixado.
 
-Para instalar:
-✅ Para instalar o TeamViewer Host, basta apenas dar 2 cliques no arquivo baixado que a loja será aberta e a instalação ocorrerá por lá.
-
-🖨️ **Driver para Impressoras HP:**
+🖨️ **Drivers HP (HPLIP):**
 
 ```bash
 sudo apt install hplip
@@ -235,73 +229,63 @@ sudo apt install hplip
 
 ---
 
-## 💻 5) Trocar Wyland para X11
+## 🔄 6) Alterar de Wayland para X11
 
-✅ Para uma melhor compatibilidade com alguns softwares, precisaremos alterar o [**Window Manager**](https://diolinux.com.br/editorial/xorg-e-wayland-o-que-sao.html) do AnduinOS para o Xorg. É bem simples, basta alterar a configuração mostrada a baixo:
-
-* Abra o arquivo de configuração do GDM:
+Para garantir compatibilidade com mais programas:
 
 ```bash
 sudo nano /etc/gdm3/custom.conf
 ```
 
-* Encontre a seguinte linha no arquivo:
+Altere a linha:
 
 ```bash
 #WaylandEnable=false
 ```
 
-* Descomente (remova o #) para que fique assim:
+Para:
 
 ```bash
 WaylandEnable=false
 ```
 
-* Salve e saia (Ctrl + O, Enter, depois Ctrl + X)
+Salve, feche o arquivo e reinicie:
 
-* Reinicie a máquina
- 
 ```bash
 sudo reboot
 ```
 
 ---
 
-## 💻 6) Ingressar a máquina no AD MIRANDA.BR
+## 🏢 7) Ingressar no Domínio AD `MIRANDA.BR`
 
-✅ Iremos ingeressar a máquina no AD através do utilitário **CID** [Closed In Directory](https://cid-doc.github.io/)
+Use o utilitário **CID (Closed In Directory)**:  
+📘 [Documentação oficial](https://cid-doc.github.io/)  
+📺 [Canal do YouTube com tutoriais](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD)
 
-- Instalação:
+### 🧩 Instalação do CID:
 
 ```bash
 sudo add-apt-repository -y ppa:emoraes25/cid
-```
-
-```bash
 sudo apt update && sudo apt -y install cid cid-gtk
 ```
 
-✅ Após o passo anterior, um atalho com o nome **CID** aparecerá no menu de programas do AnduinOS. Basta acessar e marcar o campo "join the domain" e seguir os passos que são bastante intuitivos. Ao fim será sugerido o reinicio da máquina, aceite e, após a máquina reiniciar já estará tudo pronto. A máquina já estará no domínio **miranda.br** e pronta para fazer login com os usuários do AD.
-
-
-- Documentação:
-
-✅ Além da documentação oficial do **CID** [DOCUMENTAÇÃO OFICIAL](https://cid-doc.github.io/) existe também o canal do youtube do criador da ferramenta mostrando tudo a respeito da ferramenta. [YouTube CID](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD&si=2dCdM6aP6NJwGFh6)
+✅ Após a instalação, abra o programa **CID**, marque a opção “Join the domain” e siga os passos. Após concluir, reinicie a máquina.
 
 ---
 
-## ✅ 7) Finalização
+## ✅ 8) Finalização
 
-- Após o reinicio da máquina, algumas configurações se fazem necessárias quando um usuário faz login, são elas:
+🔧 Após o login de cada usuário, recomenda-se:
 
-✅ Alterar as configurações de energia, para impedir da máquina entrar em suspensão automática;
-✅ Configurar o teamviwer para prover acesso fácil ao time de TI e impedir o usuário de fechar o programa sem permissão ;
-✅ Cadastrar a base de produção no Sankhya-Om
-✅ Alterar localização no provedor de previsão do tempo (opcional).
+- ⚡ Ajustar as configurações de energia (evitar suspensão automática).
+- 💼 Configurar o TeamViewer para evitar encerramento pelo usuário.
+- 🌐 Cadastrar a base de produção no Sankhya-Om.
+- 🌦️ (Opcional) Ajustar localização no app de clima.
 
 ---
 
 ## 🎉 Tudo Pronto!
 
-Parabéns! Seu ambiente está pronto para uso. 🚀  
-Em caso de dúvidas, chame o **TI**! 👨‍💻✨
+Parabéns! Seu ambiente Linux está completamente configurado e pronto para uso. 🚀  
+Em caso de dúvidas ou problemas, entre em contato com o **time de TI**! 👨‍💻💚
