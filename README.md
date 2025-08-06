@@ -146,7 +146,7 @@ Insira o seguinte conteúdo:
 
 ```desktop
 [Desktop Entry]
-Name=Dbclipper
+Name=Publico_Miranda
 Comment=Acesso à pasta Dbclipper
 Exec=xdg-open /home/USUARIO/Rede/Dbclipper
 Icon=folder
