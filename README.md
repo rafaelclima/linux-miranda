@@ -120,105 +120,82 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ## 🌐 3) Compartilhamento de Rede - Configuração para Todos os Usuários
 
-**Configure o /etc/security/pam_mount.conf.xml**
-Edite esse arquivo:
-```bash
-sudo nano /etc/security/pam_mount.conf.xml
+**Verifique a pasta cid dentro de \\berlim\NETLOGON**
+- Abra o arquivo shares.xml e adicione o seguinte código, caso não exista:
+```xml
+<pam_mount>
+    <volume
+        user="*"
+        fstype="cifs"
+        server="berlim"
+        path="Dbclipper\PESSOAL"
+        mountpoint="~/Rede/Dbclipper"
+        options="rw,iocharset=utf8,sec=ntlmssp,domain=MIRANDA.BR" />
+</pam_mount>
 ```
 
-**Adicione uma linha <volume> dentro da tag <pam_mount> como esta:**
-```bash
-<volume
-    user="*"
-    fstype="cifs"
-    server="berlim"
-    path="Dbclipper/PESSOAL"
-    mountpoint="~/Dbclipper"
-    options="rw,iocharset=utf8,sec=ntlmssp,domain=MIRANDA.BR"
-/>
-```
+**Isso fará com que cada usuário do AD que fizer login na máquina tenha a pasta PESSOAL de \\berlim\Dbclipper\PESSOAL montada por padrão**
 
-**Verifique se o PAM está chamando o pam_mount**
-Deixe seu /etc/pam.d/gdm-password (ou login, dependendo do display manager), dessa maneira:
-```bash
-#%PAM-1.0
-auth    requisite       pam_nologin.so
-auth    required        pam_succeed_if.so user != root quiet_success
-@include common-auth
-auth    optional        pam_gnome_keyring.so
-
-@include common-account
-
-# Montagens automáticas do pam_mount
-session required        pam_mount.so
-
-session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so close
-session required        pam_loginuid.so
-session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so open
-
-session optional        pam_keyinit.so force revoke
-session required        pam_limits.so
-session required        pam_env.so readenv=1
-session required        pam_env.so readenv=1 user_readenv=1 envfile=/etc/default/locale
-
-@include common-session
-
-session optional        pam_gnome_keyring.so auto_start
-
-@include common-password
-```
 
 **Deixar um atalho na área de trabalho para o usuário**
-Você pode deixar o .desktop no /etc/skel/Desktop/ com:
+
+*Crie um diretório para armazenar o atalho modelo:
 ```bash
+sudo mkdir -p /etc/Dbclipper
+```
+
+*Crie o arquivo modelo:
+```bash
+sudo nano /etc/Dbclipper/Dbclipper.template.desktop
+```
+
+* Insira o seguinte conteúdo:
+``` bash
 [Desktop Entry]
 Name=Dbclipper
-Exec=xdg-open ~/Dbclipper
-Icon=folder-remote
-Type=Application
-Terminal=false
-```
-
-Esta etapa garante que todo novo usuário:
-- Monte automaticamente o compartilhamento smb://berlim/Dbclipper ao fazer login.
-- Tenha um atalho na área de trabalho para abrir essa pasta.
-
-## 🔄 1. Criar Autostart para Montagem do Compartilhamento
-
-```bash
-sudo mkdir -p /etc/skel/.config/autostart
-```
-
-```bash
-cat <<EOF | sudo tee /etc/skel/.config/autostart/mount-dbclipper.desktop
-[Desktop Entry]
-Type=Application
-Exec=gio mount smb://berlim/Dbclipper/PESSOAL
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Name=Montar Publico
-Comment=Montar compartilhamento de rede Dbclipper no login
-EOF
-```
-
-
-## 🖥️ 2. Criar Atalho para Acesso Direto ao Compartilhamento
-
-```bash
-cat <<EOF | sudo tee /etc/skel/Desktop/dbclipper.desktop
-[Desktop Entry]
-Name=Publico_Miranda
-Comment=Abrir compartilhamento de rede Dbclipper
-Exec=gio open smb://berlim/Dbclipper/PESSOAL
-Icon=folder-remote
+Comment=Acesso à pasta Dbclipper
+Exec=xdg-open /home/USUARIO/Rede/Dbclipper
+Icon=folder
 Terminal=false
 Type=Application
-EOF
+Categories=Network;
 ```
+* Dê permissão de execução:
+```bash
+sudo chmod +x /etc/Dbclipper/Dbclipper.template.desktop
+``` 
+
+**Criar o script de login para gerar o atalho personalizado**
+* Crie o script:
 
 ```bash
-sudo chmod +x /etc/skel/Desktop/dbclipper.desktop
+sudo nano /etc/profile.d/copy_desktop_shortcut.sh
+```
+
+* Cole o conteúdo a baixo:
+
+```bash
+#!/bin/bash
+
+USER_HOME="/home/$USER"
+DESKTOP="$USER_HOME/Desktop"
+TARGET="$DESKTOP/Dbclipper.desktop"
+TEMPLATE="/etc/Dbclipper/Dbclipper.template.desktop"
+
+# Remove possíveis modelos que foram copiados via /etc/skel
+rm -f "$DESKTOP/Dbclipper.template.desktop"
+
+# Se o atalho ainda não existe, cria um novo baseado no template
+if [ ! -f "$TARGET" ]; then
+    cp "$TEMPLATE" "$TARGET"
+    sed -i "s|/home/USUARIO|/home/$USER|g" "$TARGET"
+    chmod +x "$TARGET"
+fi
+```
+
+* Dê permissão de execução:
+```bash
+sudo chmod +x /etc/profile.d/copy_desktop_shortcut.sh
 ```
 
 ## 🖥️ 3. Criar Atalho para Acesso ao link dos ramais miranda
