@@ -29,7 +29,7 @@ Acesse o site oficial da Sankhya e faça o download do navegador:
 Após extrair o conteúdo, copie **apenas os arquivos internos** (e não a pasta principal extraída) para a pasta de destino:
 
 ```bash
-sudo cp -r diretorio_do_arquivo_baixado/* /opt/Navegador_Sankhya/
+sudo cp -r /home/miranda/Download/nome_da_pasta_extraida/* /opt/Navegador_Sankhya/
 ```
 
 ### 🔐 Dê permissões de execução
