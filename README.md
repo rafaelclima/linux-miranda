@@ -1,5 +1,5 @@
 
-<h1 align="center">🚀 Guia Rápido de Instalação e Configuração - Anduin OS Miranda</h1>
+<h1 align="center">🚀 Guia de Instalação e Configuração - Anduin OS Miranda</h1>
 
 Este guia vai te ajudar a instalar e configurar o **Anduin OS**, ou qualquer outra distribuição Linux baseada em **Debian**, com o **Navegador Sankhya** e alguns outros softwares essenciais.  
 ➡️ **Siga os passos na ordem correta para garantir o sucesso da configuração!** 😉
