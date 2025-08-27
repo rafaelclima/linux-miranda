@@ -342,7 +342,7 @@ sudo udevadm control --reload
 ```
 
 ---
-
+```bash
 ## 🎉 Pronto!
 
 ✅ Linux no domínio  
@@ -389,7 +389,7 @@ EOF
         chmod +x "$SHORTCUT"
     fi
 done
-
+```
 ---
 ## 📄 Autor: Rafael Lima 🧑‍💻  
 **📅 Revisado:** Julho/2025
