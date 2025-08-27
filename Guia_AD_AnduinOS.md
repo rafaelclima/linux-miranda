@@ -352,6 +352,45 @@ sudo udevadm control --reload
 ✅ `Nautilus` abre `smb://` **direto** sem `pam_mount` nem `fstab`
 
 ---
+#!/bin/bash
+USER_HOME="/home/$USER"
+DESKTOP="$USER_HOME/Desktop"
+SHARES_FILE="/etc/security/pam_mount.conf.xml"
 
+mkdir -p "$DESKTOP"
+
+# Limpa atalhos antigos criados por este script
+find "$DESKTOP" -maxdepth 1 -type f -name "NetShare_*.desktop" -delete
+
+# Percorre volumes configurados
+grep "<volume" "$SHARES_FILE" | while read -r line; do
+    # Extrai o mountpoint
+    MOUNTPOINT=$(echo "$line" | sed -n 's/.*mountpoint="\([^"]*\)".*/\1/p')
+
+    # Substitui variáveis tipo ~ e %h
+    MOUNTPOINT=${MOUNTPOINT//\~/$USER_HOME}
+    MOUNTPOINT=${MOUNTPOINT//%h/$USER_HOME}
+
+    if [ -d "$MOUNTPOINT" ]; then
+        # Nome amigável pro atalho
+        NAME=$(basename "$MOUNTPOINT")
+
+        SHORTCUT="$DESKTOP/NetShare_${NAME}.desktop"
+        cat <<EOF > "$SHORTCUT"
+[Desktop Entry]
+Name=$NAME
+Comment=Atalho para $NAME
+Exec=xdg-open "$MOUNTPOINT"
+Icon=folder
+Terminal=false
+Type=Application
+Categories=Network;
+EOF
+        chmod +x "$SHORTCUT"
+    fi
+done
+
+---
 ## 📄 Autor: Rafael Lima 🧑‍💻  
 **📅 Revisado:** Julho/2025
+---
