@@ -123,13 +123,20 @@ Adicione o seguinte trecho, caso não exista:
 
 ```xml
 <pam_mount>
-    <volume
-        user="*"
-        fstype="cifs"
-        server="berlim"
-        path="Dbclipper\PESSOAL"
-        mountpoint="~/Rede/Dbclipper"
-        options="rw,iocharset=utf8,sec=ntlmssp,domain=MIRANDA.BR" />
+	<!-- Application control tags (RECOMMENDED DO NOT MAKE CHANGES) -->
+	<debug enable="0" />
+	<mkmountpoint enable="1" remove="true" />
+	<logout wait="0" hup="yes" term="yes" kill="yes" />
+
+	<!-- DECLARE HERE YOUR VOLUMES ("<volume... />" tags)! -->
+	
+  <volume sgrp="gloja 5" fstype="cifs" server="berlim" path="Dbclipper\PESSOAL" mountpoint="~/Publico_LJ05" />
+	<volume sgrp="gloja 1" fstype="cifs" server="berlim" path="01" mountpoint="~/Publico_LJ01" />
+	<volume sgrp="gloja 2" fstype="cifs" server="berlim" path="02" mountpoint="~/Publico_LJ02" />
+	<volume sgrp="gloja 7" fstype="cifs" server="berlim" path="07" mountpoint="~/Publico_LJ07" />
+	<volume sgrp="gloja 8" fstype="cifs" server="berlim" path="08" mountpoint="~/Publico_LJ08" />
+	<volume sgrp="gloja 11" fstype="cifs" server="berlim" path="11" mountpoint="~/Publico_LJ011" />
+
 </pam_mount>
 ```
 
@@ -137,59 +144,59 @@ Adicione o seguinte trecho, caso não exista:
 
 ### 🖱️ Crie o atalho para a pasta compartilhada
 
-```bash
-sudo mkdir -p /etc/Dbclipper
-sudo nano /etc/Dbclipper/Dbclipper.template.desktop
-```
-
-Insira o seguinte conteúdo:
-
-```desktop
-[Desktop Entry]
-Name=Publico_Miranda
-Comment=Acesso à pasta Dbclipper
-Exec=xdg-open /home/USUARIO/Rede/Dbclipper
-Icon=folder
-Terminal=false
-Type=Application
-Categories=Network;
-```
-
-Dê permissão de execução:
+⚙️ Crie o atalho e o script de login para criar atalho personalizado
 
 ```bash
-sudo chmod +x /etc/Dbclipper/Dbclipper.template.desktop
-```
-
-### ⚙️ Script de login para criar atalho personalizado
-
-```bash
-sudo nano /etc/profile.d/copy_desktop_shortcut.sh
+sudo nano /etc/profile.d/create_network_shortcuts.sh
 ```
 
 Conteúdo do script:
 
 ```bash
 #!/bin/bash
-
 USER_HOME="/home/$USER"
 DESKTOP="$USER_HOME/Desktop"
-TARGET="$DESKTOP/Dbclipper.desktop"
-TEMPLATE="/etc/Dbclipper/Dbclipper.template.desktop"
+SHARES_FILE="/etc/security/pam_mount.conf.xml"
 
-rm -f "$DESKTOP/Dbclipper.template.desktop"
+mkdir -p "$DESKTOP"
 
-if [ ! -f "$TARGET" ]; then
-    cp "$TEMPLATE" "$TARGET"
-    sed -i "s|/home/USUARIO|/home/$USER|g" "$TARGET"
-    chmod +x "$TARGET"
-fi
+# Limpa atalhos antigos criados por este script
+find "$DESKTOP" -maxdepth 1 -type f -name "NetShare_*.desktop" -delete
+
+# Percorre volumes configurados
+grep "<volume" "$SHARES_FILE" | while read -r line; do
+    # Extrai o mountpoint
+    MOUNTPOINT=$(echo "$line" | sed -n 's/.*mountpoint="\([^"]*\)".*/\1/p')
+
+    # Substitui variáveis tipo ~ e %h
+    MOUNTPOINT=${MOUNTPOINT//\~/$USER_HOME}
+    MOUNTPOINT=${MOUNTPOINT//%h/$USER_HOME}
+
+    if [ -d "$MOUNTPOINT" ]; then
+        # Nome amigável pro atalho
+        NAME=$(basename "$MOUNTPOINT")
+
+        SHORTCUT="$DESKTOP/NetShare_${NAME}.desktop"
+        cat <<EOF > "$SHORTCUT"
+[Desktop Entry]
+Name=$NAME
+Comment=Atalho para $NAME
+Exec=xdg-open "$MOUNTPOINT"
+Icon=folder
+Terminal=false
+Type=Application
+Categories=Network;
+EOF
+        chmod +x "$SHORTCUT"
+    fi
+done
+
 ```
 
 Permissão de execução:
 
 ```bash
-sudo chmod +x /etc/profile.d/copy_desktop_shortcut.sh
+sudo chmod +x /etc/profile.d/create_network_shortcuts.sh
 ```
 
 ---
