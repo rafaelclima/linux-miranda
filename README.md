@@ -1,7 +1,7 @@
 
-<h1 align="center">🚀 Guia de Instalação e Configuração - Anduin OS Miranda</h1>
+<h1 align="center">🚀 Guia de Instalação e Configuração - Linux Mint Miranda</h1>
 
-Este guia vai te ajudar a instalar e configurar o **Anduin OS**, ou qualquer outra distribuição Linux baseada em **Debian**, com o **Navegador Sankhya** e alguns outros softwares essenciais.  
+Este guia vai te ajudar a instalar e configurar o **Linux Mint**, ou qualquer outra distribuição Linux baseada em **Debian**, com o **Navegador Sankhya** e alguns outros softwares essenciais.  
 ➡️ **Siga os passos na ordem correta para garantir o sucesso da configuração!** 😉
 
 <p align="center">
@@ -35,8 +35,7 @@ sudo cp -r /home/miranda/Download/nome_da_pasta_extraida/* /opt/Navegador_Sankhy
 ### 🔐 Dê permissões de execução
 
 ```bash
-chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
-chmod +x /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
+sudo chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
 ```
 
 ### 🖱️ Crie um atalho para o Navegador Sankhya
@@ -57,45 +56,10 @@ EOF
 
 ---
 
-## 🔗 2) Configuração do Serviço Web Connection
-
 ### ☕ Instale o Java
 
 ```bash
 sudo apt install default-jdk
-```
-
-### 🧩 Crie o serviço systemd para o WebConnection
-
-```bash
-cat <<EOF | sudo tee /etc/systemd/system/web-connection.service
-[Unit]
-Description=Web Connection Navegador Sankhya
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/java -jar /opt/Navegador_Sankhya/resources/app/webConnection/web-connection-webclient-plugin.jar
-Restart=always
-User=root
-
-[Install]
-WantedBy=multi-user.target
-EOF
-```
-
-### 🔄 Recarregue, habilite e inicie o serviço
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable web-connection
-sudo systemctl restart web-connection
-```
-
-### 🔍 Verifique o status do serviço
-
-```bash
-sudo systemctl status web-connection.service
 ```
 
 ### ⚙️ Ajuste permissões e atalho global
@@ -115,7 +79,7 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ---
 
-## 🌐 3) Compartilhamento de Rede - Padrão para Usuários
+## 🌐 2) Compartilhamento de Rede - Padrão para Usuários
 
 ### 📝 Edite o arquivo `shares.xml` na pasta `\\berlim\NETLOGON\cid`
 
@@ -142,66 +106,9 @@ Adicione o seguinte trecho, caso não exista:
 
 🔒 Isso garantirá que a pasta pessoal seja montada automaticamente para todos os usuários do AD.
 
-### 🖱️ Crie o atalho para a pasta compartilhada
-
-⚙️ Crie o atalho e o script de login para criar atalho personalizado
-
-```bash
-sudo nano /etc/profile.d/create_network_shortcuts.sh
-```
-
-Conteúdo do script:
-
-```bash
-#!/bin/bash
-USER_HOME="/home/$USER"
-DESKTOP="$USER_HOME/Desktop"
-SHARES_FILE="/etc/security/pam_mount.conf.xml"
-
-mkdir -p "$DESKTOP"
-
-# Limpa atalhos antigos criados por este script
-find "$DESKTOP" -maxdepth 1 -type f -name "NetShare_*.desktop" -delete
-
-# Percorre volumes configurados
-grep "<volume" "$SHARES_FILE" | while read -r line; do
-    # Extrai o mountpoint
-    MOUNTPOINT=$(echo "$line" | sed -n 's/.*mountpoint="\([^"]*\)".*/\1/p')
-
-    # Substitui variáveis tipo ~ e %h
-    MOUNTPOINT=${MOUNTPOINT//\~/$USER_HOME}
-    MOUNTPOINT=${MOUNTPOINT//%h/$USER_HOME}
-
-    if [ -d "$MOUNTPOINT" ]; then
-        # Nome amigável pro atalho
-        NAME=$(basename "$MOUNTPOINT")
-
-        SHORTCUT="$DESKTOP/NetShare_${NAME}.desktop"
-        cat <<EOF > "$SHORTCUT"
-[Desktop Entry]
-Name=$NAME
-Comment=Atalho para $NAME
-Exec=xdg-open "$MOUNTPOINT"
-Icon=folder
-Terminal=false
-Type=Application
-Categories=Network;
-EOF
-        chmod +x "$SHORTCUT"
-    fi
-done
-
-```
-
-Permissão de execução:
-
-```bash
-sudo chmod +x /etc/profile.d/create_network_shortcuts.sh
-```
-
 ---
 
-## 📞 4) Criar Atalho para Ramais Miranda
+## 📞 3) Criar Atalho para Ramais Miranda
 
 ```bash
 cat <<EOF | sudo tee /etc/skel/Desktop/ramais_miranda.desktop
@@ -218,10 +125,7 @@ EOF
 
 ---
 
-## 🧰 5) Programas Extras
-
-✅ **OnlyOffice:** Instale pela loja de aplicativos do sistema.  
-✅ **Configurações da Impressora:** Também disponível pela loja.
+## 🧰 4) Programas Extras
 
 🧩 **TeamViewer Host:**  
 🔗 [Download TeamViewer Host](https://download.teamviewer.com/download/linux/teamviewer-host_amd64.deb)
@@ -231,40 +135,13 @@ EOF
 🖨️ **Drivers HP (HPLIP):**
 
 ```bash
-sudo apt install hplip
+sudo apt install hplip && sudo apt install hplip-gui -y
 ```
+🧩 **AnyDesk**
 
 ---
 
-## 🔄 6) Alterar de Wayland para X11
-
-Para garantir compatibilidade com mais programas:
-
-```bash
-sudo nano /etc/gdm3/custom.conf
-```
-
-Altere a linha:
-
-```bash
-#WaylandEnable=false
-```
-
-Para:
-
-```bash
-WaylandEnable=false
-```
-
-Salve, feche o arquivo e reinicie:
-
-```bash
-sudo reboot
-```
-
----
-
-## 🏢 7) Ingressar no Domínio AD `MIRANDA.BR`
+## 🏢 5) Ingressar no Domínio AD `MIRANDA.BR`
 
 Use o utilitário **CID (Closed In Directory)**:  
 📘 [Documentação oficial](https://cid-doc.github.io/)  
@@ -281,14 +158,75 @@ sudo apt update && sudo apt -y install cid cid-gtk
 
 ---
 
-## ✅ 8) Finalização
+## 🏢 6) Aplicar o wallpaper da Miranda para todos os usuários
+
+## Crie a pasta de wallpapers customizados e coloque a sua imagem lá:
+```bash
+sudo mkdir -p /usr/share/backgrounds/miranda
+sudo cp ~/bg_miranda.jpg /usr/share/backgrounds/miranda/bg_miranda.jpg
+sudo chmod 644 /usr/share/backgrounds/miranda/bg_miranda.jpg
+```
+
+## Configurar fundo da área de trabalho e tela de bloqueio via /etc/skel
+## Os usuários do AD, quando logam pela primeira vez, recebem o esqueleto do /etc/skel.
+## Vamos forçar a configuração usando dconf.
+
+```bash
+sudo mkdir -p /etc/dconf/db/local.d
+```
+
+## Criar diretório de perfil dconf
+```bash
+sudo mkdir -p /etc/dconf/db/local.d
+```
+
+## Criar arquivo com as chaves
+```bash
+sudo nano /etc/dconf/db/local.d/01-miranda
+```
+E cole:
+```ini
+[org/cinnamon/desktop/background]
+picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
+
+[org/cinnamon/desktop/screensaver]
+picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
+```
+
+## Atualizar base do dconf:
+```bash
+sudo dconf update
+```
+
+## Configurar tela de login (LightDM)
+Criar pasta de configuração:
+```bash
+sudo mkdir -p /etc/lightdm/lightdm-gtk-greeter.conf.d
+```
+
+Criar arquivo de configuração:
+```bash
+sudo nano /etc/lightdm/lightdm-gtk-greeter.conf.d/50-miranda.conf
+```
+E cole:
+```ini
+[greeter]
+background=/usr/share/backgrounds/miranda/bg_miranda.jpg
+```
+
+Reinicie o LightDM para aplicar (Isso derruba a sessão atual — faça num momento seguro!)
+```bash
+sudo systemctl restart lightdm
+``` 
+
+---
+## ✅ 7) Finalização
 
 🔧 Após o login de cada usuário, recomenda-se:
 
 - ⚡ Ajustar as configurações de energia (evitar suspensão automática).
 - 💼 Configurar o TeamViewer para evitar encerramento pelo usuário.
 - 🌐 Cadastrar a base de produção no Sankhya-Om.
-- 🌦️ (Opcional) Ajustar localização no app de clima.
 
 ---
 
