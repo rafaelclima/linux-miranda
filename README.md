@@ -1,7 +1,6 @@
-
 <h1 align="center">🚀 Guia de Instalação e Configuração - Linux Mint Miranda</h1>
 
-Este guia vai te ajudar a instalar e configurar o **Linux Mint**, ou qualquer outra distribuição Linux baseada em **Debian**, com o **Navegador Sankhya** e alguns outros softwares essenciais.  
+Este guia ajuda a instalar e configurar o **Linux Mint**, ou outras distribuições Linux baseadas em **Debian**, com o **Navegador Sankhya** e softwares essenciais.  
 ➡️ **Siga os passos na ordem correta para garantir o sucesso da configuração!** 😉
 
 <p align="center">
@@ -11,35 +10,42 @@ Este guia vai te ajudar a instalar e configurar o **Linux Mint**, ou qualquer ou
 
 ---
 
-## 🗂️ 1) Instalação do Navegador Sankhya
+## 📑 Sumário
 
-### 📁 Crie a pasta "Navegador_Sankhya" em `/opt`
+1. [Instalação do Navegador Sankhya](#-1-instalação-do-navegador-sankhya)
+2. [Compartilhamento de Rede](#-2-compartilhamento-de-rede)
+3. [Criar Atalho para Ramais Miranda](#-3-criar-atalho-para-ramais-miranda)
+4. [Programas Extras](#-4-programas-extras)
+5. [Ingressar no Domínio AD MIRANDA.BR](#-5-ingressar-no-domínio-ad-mirandabr)
+6. [Aplicar Wallpaper Miranda](#-6-aplicar-wallpaper-miranda-para-todos-os-usuários)
+7. [Finalização](#-7-finalização)
+8. [Conclusão](#-conclusão)
 
+---
+
+## 📂 1) Instalação do Navegador Sankhya
+
+### 📁 Criar pasta de destino
 ```bash
 sudo mkdir /opt/Navegador_Sankhya
 ```
 
-### 🌐 Baixe o Navegador Sankhya
+### 🌐 Baixar o Navegador Sankhya
+Acesse o site oficial:  
+🔗 [Download Navegador Sankhya](https://downloads.sankhya.com.br/)
 
-Acesse o site oficial da Sankhya e faça o download do navegador:  
-🔗 [Página de Download do Navegador Sankhya](https://downloads.sankhya.com.br/)
-
-### 📦 Extraia e copie os arquivos
-
-Após extrair o conteúdo, copie **apenas os arquivos internos** (e não a pasta principal extraída) para a pasta de destino:
-
+### 📦 Extrair e copiar arquivos
+Copie **apenas os arquivos internos** para a pasta de destino:
 ```bash
-sudo cp -r /home/miranda/Download/nome_da_pasta_extraida/* /opt/Navegador_Sankhya/
+sudo cp -r ~/Download/nome_da_pasta_extraida/* /opt/Navegador_Sankhya/
 ```
 
-### 🔐 Dê permissões de execução
-
+### 🔐 Permissões de execução
 ```bash
 sudo chmod +x /opt/Navegador_Sankhya/execNavegadorSankhya
 ```
 
-### 🖱️ Crie um atalho para o Navegador Sankhya
-
+### 🖱️ Criar atalho do Navegador
 ```bash
 cat <<EOF | sudo tee /usr/share/applications/navegador-sankhya.desktop
 [Desktop Entry]
@@ -54,23 +60,18 @@ Categories=WebBrowser
 EOF
 ```
 
----
-
-### ☕ Instale o Java
-
+### ☕ Instalar Java
 ```bash
 sudo apt install default-jdk
 ```
 
-### ⚙️ Ajuste permissões e atalho global
-
+### ⚙️ Ajustar permissões e atalho global
 ```bash
 sudo chmod 644 /usr/share/applications/navegador-sankhya.desktop
 sudo update-desktop-database
 ```
 
-### 👥 Garante que novos usuários recebam o atalho
-
+### 👥 Garantir atalho para novos usuários
 ```bash
 sudo mkdir -p /etc/skel/Desktop
 sudo cp /usr/share/applications/navegador-sankhya.desktop /etc/skel/Desktop/
@@ -79,32 +80,26 @@ sudo chmod +x /etc/skel/Desktop/navegador-sankhya.desktop
 
 ---
 
-## 🌐 2) Compartilhamento de Rede - Padrão para Usuários
+## 🌐 2) Compartilhamento de Rede
 
-### 📝 Edite o arquivo `shares.xml` na pasta `\\berlim\NETLOGON\cid`
-
-Adicione o seguinte trecho, caso não exista:
+Edite o arquivo `shares.xml` na pasta `\\berlim\NETLOGON\cid` e adicione (se não existir):
 
 ```xml
 <pam_mount>
-	<!-- Application control tags (RECOMMENDED DO NOT MAKE CHANGES) -->
-	<debug enable="0" />
-	<mkmountpoint enable="1" remove="true" />
-	<logout wait="0" hup="yes" term="yes" kill="yes" />
+  <debug enable="0" />
+  <mkmountpoint enable="1" remove="true" />
+  <logout wait="0" hup="yes" term="yes" kill="yes" />
 
-	<!-- DECLARE HERE YOUR VOLUMES ("<volume... />" tags)! -->
-	
   <volume sgrp="gloja 5" fstype="cifs" server="berlim" path="Dbclipper\PESSOAL" mountpoint="~/Publico_LJ05" />
-	<volume sgrp="gloja 1" fstype="cifs" server="berlim" path="01" mountpoint="~/Publico_LJ01" />
-	<volume sgrp="gloja 2" fstype="cifs" server="berlim" path="02" mountpoint="~/Publico_LJ02" />
-	<volume sgrp="gloja 7" fstype="cifs" server="berlim" path="07" mountpoint="~/Publico_LJ07" />
-	<volume sgrp="gloja 8" fstype="cifs" server="berlim" path="08" mountpoint="~/Publico_LJ08" />
-	<volume sgrp="gloja 11" fstype="cifs" server="berlim" path="11" mountpoint="~/Publico_LJ011" />
-
+  <volume sgrp="gloja 1" fstype="cifs" server="berlim" path="01" mountpoint="~/Publico_LJ01" />
+  <volume sgrp="gloja 2" fstype="cifs" server="berlim" path="02" mountpoint="~/Publico_LJ02" />
+  <volume sgrp="gloja 7" fstype="cifs" server="berlim" path="07" mountpoint="~/Publico_LJ07" />
+  <volume sgrp="gloja 8" fstype="cifs" server="berlim" path="08" mountpoint="~/Publico_LJ08" />
+  <volume sgrp="gloja 11" fstype="cifs" server="berlim" path="11" mountpoint="~/Publico_LJ011" />
 </pam_mount>
 ```
 
-🔒 Isso garantirá que a pasta pessoal seja montada automaticamente para todos os usuários do AD.
+🔒 Isso garante que as pastas pessoais sejam montadas automaticamente para usuários do AD.
 
 ---
 
@@ -127,64 +122,54 @@ EOF
 
 ## 🧰 4) Programas Extras
 
-🧩 **TeamViewer Host:**  
-🔗 [Download TeamViewer Host](https://download.teamviewer.com/download/linux/teamviewer-host_amd64.deb)
+- 🧩 **TeamViewer Host** → [Download](https://download.teamviewer.com/download/linux/teamviewer-host_amd64.deb)  
+  *Instale com dois cliques no `.deb` baixado.*  
 
-📦 Para instalar: basta dar dois cliques no arquivo `.deb` baixado.
+- 🖨️ **Drivers HP (HPLIP):**
+  ```bash
+  sudo apt install hplip hplip-gui -y
+  ```
 
-🖨️ **Drivers HP (HPLIP):**
+- 🧩 **LinuxToys** *https://github.com/psygreg/linuxtoys*
 
-```bash
-sudo apt install hplip && sudo apt install hplip-gui -y
-```
-🧩 **AnyDesk**
+- 🧩 **AnyDesk** *Instalar pelo LinuxToys*
+
+🧩 **Google Chrome** *Instalar pelo LinuxToys*
 
 ---
 
 ## 🏢 5) Ingressar no Domínio AD `MIRANDA.BR`
 
-Use o utilitário **CID (Closed In Directory)**:  
-📘 [Documentação oficial](https://cid-doc.github.io/)  
-📺 [Canal do YouTube com tutoriais](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD)
+Use o **CID (Closed In Directory):**  
+📘 [Documentação](https://cid-doc.github.io/)  
+📺 [Tutoriais no YouTube](https://youtube.com/playlist?list=PLZ1ipIxs8prxiDi8YFiSRQoss_A7rnAYD)
 
-### 🧩 Instalação do CID:
-
+### Instalação do CID:
 ```bash
 sudo add-apt-repository -y ppa:emoraes25/cid
 sudo apt update && sudo apt -y install cid cid-gtk
 ```
 
-✅ Após a instalação, abra o programa **CID**, marque a opção “Join the domain” e siga os passos. Após concluir, reinicie a máquina.
+✅ Abra o **CID**, marque “Join the domain” e siga os passos.  
+Reinicie a máquina ao concluir.
 
 ---
 
-## 🏢 6) Aplicar o wallpaper da Miranda para todos os usuários
+## 🖼️ 6) Aplicar Wallpaper Miranda para Todos os Usuários
 
-## Crie a pasta de wallpapers customizados e coloque a sua imagem lá:
+### 📂 Criar pasta e copiar imagem
 ```bash
 sudo mkdir -p /usr/share/backgrounds/miranda
 sudo cp ~/bg_miranda.jpg /usr/share/backgrounds/miranda/bg_miranda.jpg
 sudo chmod 644 /usr/share/backgrounds/miranda/bg_miranda.jpg
 ```
 
-## Configurar fundo da área de trabalho e tela de bloqueio via /etc/skel
-## Os usuários do AD, quando logam pela primeira vez, recebem o esqueleto do /etc/skel.
-## Vamos forçar a configuração usando dconf.
-
+### 🖥️ Configurar via `dconf` (para novos usuários)
 ```bash
 sudo mkdir -p /etc/dconf/db/local.d
-```
-
-## Criar diretório de perfil dconf
-```bash
-sudo mkdir -p /etc/dconf/db/local.d
-```
-
-## Criar arquivo com as chaves
-```bash
 sudo nano /etc/dconf/db/local.d/01-miranda
 ```
-E cole:
+Conteúdo:
 ```ini
 [org/cinnamon/desktop/background]
 picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
@@ -192,45 +177,40 @@ picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
 [org/cinnamon/desktop/screensaver]
 picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
 ```
-
-## Atualizar base do dconf:
+Atualizar:
 ```bash
 sudo dconf update
 ```
 
-## Configurar tela de login (LightDM)
-Criar pasta de configuração:
+### 🔑 Configurar tela de login (LightDM)
 ```bash
 sudo mkdir -p /etc/lightdm/lightdm-gtk-greeter.conf.d
-```
-
-Criar arquivo de configuração:
-```bash
 sudo nano /etc/lightdm/lightdm-gtk-greeter.conf.d/50-miranda.conf
 ```
-E cole:
+Conteúdo:
 ```ini
 [greeter]
 background=/usr/share/backgrounds/miranda/bg_miranda.jpg
 ```
 
-Reinicie o LightDM para aplicar (Isso derruba a sessão atual — faça num momento seguro!)
+Reiniciar o LightDM:
 ```bash
 sudo systemctl restart lightdm
-``` 
+```
 
 ---
+
 ## ✅ 7) Finalização
 
-🔧 Após o login de cada usuário, recomenda-se:
-
-- ⚡ Ajustar as configurações de energia (evitar suspensão automática).
-- 💼 Configurar o TeamViewer para evitar encerramento pelo usuário.
-- 🌐 Cadastrar a base de produção no Sankhya-Om.
+Após o login de cada usuário, recomenda-se:  
+- ⚡ Ajustar configurações de energia (evitar suspensão automática).  
+- 💼 Configurar TeamViewer para não ser encerrado.  
+- 🌐 Cadastrar a base de produção no Sankhya-Om.  
 
 ---
 
-## 🎉 Tudo Pronto!
+## 🎉 Conclusão
 
-Parabéns! Seu ambiente Linux está completamente configurado e pronto para uso. 🚀  
-Em caso de dúvidas ou problemas, entre em contato com o **time de TI**! 👨‍💻💚
+Parabéns! 🎊  
+O ambiente Linux está **pronto para uso**.  
+Em caso de dúvidas, entre em contato com o **time de TI** 👨‍💻💚
