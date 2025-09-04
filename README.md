@@ -206,9 +206,10 @@ Reinicie a máquina ao concluir.
 ## 🖼️ 6) Aplicar Wallpaper Miranda para Todos os Usuários
 
 ### 📂 Criar pasta e copiar imagem
+### OBS: Faça o download do arquivo de imagem desse repositório e coloque na pasta Imagens do linux Mint.
 ```bash
 sudo mkdir -p /usr/share/backgrounds/miranda
-sudo cp ~/bg_miranda.jpg /usr/share/backgrounds/miranda/bg_miranda.jpg
+sudo cp ~/Imagens/bg_miranda.jpg /usr/share/backgrounds/miranda/
 sudo chmod 644 /usr/share/backgrounds/miranda/bg_miranda.jpg
 ```
 
