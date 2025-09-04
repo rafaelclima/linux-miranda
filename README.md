@@ -225,20 +225,38 @@ picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
 [org/cinnamon/desktop/screensaver]
 picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
 ```
-Atualizar:
+
+### 🔗 Criar perfil user para novos usuários
+Crie o arquivo /etc/dconf/profile/user:
+```bash
+sudo mkdir -p /etc/dconf/profile
+sudo nano /etc/dconf/profile/user
+```
+
+Conteúdo:
+```sql
+user-db:user
+system-db:local
+```
+
+Atualizar o dconf:
 ```bash
 sudo dconf update
 ```
 
-### 🔑 Configurar tela de login (LightDM)
+✅ Agora, tanto a área de trabalho quanto a tela de bloqueio receberão o wallpaper definido para todos os novos usuários.
+
+### 🔑 Configurar tela de login (Slick Greeter)
+Edite o arquivo de configuração do slick-greeter:
 ```bash
-sudo mkdir -p /etc/lightdm/lightdm-gtk-greeter.conf.d
-sudo nano /etc/lightdm/lightdm-gtk-greeter.conf.d/50-miranda.conf
+sudo nano /etc/lightdm/slick-greeter.conf
 ```
 Conteúdo:
 ```ini
-[greeter]
+[Greeter]
 background=/usr/share/backgrounds/miranda/bg_miranda.jpg
+draw-user-backgrounds=false
+draw-grid=true
 ```
 
 Reiniciar o LightDM:
