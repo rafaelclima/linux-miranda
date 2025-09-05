@@ -213,36 +213,18 @@ sudo cp ~/Imagens/bg_miranda.jpg /usr/share/backgrounds/miranda/
 sudo chmod 644 /usr/share/backgrounds/miranda/bg_miranda.jpg
 ```
 
-### 🖥️ Configurar via `dconf` (para novos usuários)
+### 🖥️ Configurar via Script de Logon do CID
+Para garantir que o wallpaper seja aplicado a todos os usuários do AD, edite o arquivo logon.sh no servidor AD em \\berlim\NETLOGON\cid\logon.sh. Adicione o seguinte conteúdo (ou acrescente ao final do arquivo existente):
 ```bash
-sudo mkdir -p /etc/dconf/db/local.d
-sudo nano /etc/dconf/db/local.d/01-miranda
-```
-Conteúdo:
-```ini
-[org/cinnamon/desktop/background]
-picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
+#!/bin/bash
 
-[org/cinnamon/desktop/screensaver]
-picture-filename='/usr/share/backgrounds/miranda/bg_miranda.jpg'
-```
+# Configurar wallpaper do desktop
+gsettings set org.cinnamon.desktop.background picture-uri "file:///usr/share/backgrounds/miranda/bg_miranda.jpg"
+gsettings set org.cinnamon.desktop.background picture-options "zoom"
 
-### 🔗 Criar perfil user para novos usuários
-Crie o arquivo /etc/dconf/profile/user:
-```bash
-sudo mkdir -p /etc/dconf/profile
-sudo nano /etc/dconf/profile/user
-```
-
-Conteúdo:
-```sql
-user-db:user
-system-db:local
-```
-
-Atualizar o dconf:
-```bash
-sudo dconf update
+# Configurar wallpaper da tela de bloqueio
+gsettings set org.cinnamon.desktop.screensaver picture-uri "file:///usr/share/backgrounds/miranda/bg_miranda.jpg"
+gsettings set org.cinnamon.desktop.screensaver picture-options "zoom"
 ```
 
 ✅ Agora, tanto a área de trabalho quanto a tela de bloqueio receberão o wallpaper definido para todos os novos usuários.
