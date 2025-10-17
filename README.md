@@ -87,16 +87,20 @@ Edite o arquivo `shares.xml` na pasta `\\berlim\NETLOGON\cid` e adicione (se nã
 
 ```xml
 <pam_mount>
-  <debug enable="0" />
-  <mkmountpoint enable="1" remove="true" />
-  <logout wait="0" hup="yes" term="yes" kill="yes" />
+	<!-- Application control tags (RECOMMENDED DO NOT MAKE CHANGES) -->
+	<debug enable="0" />
+	<mkmountpoint enable="1" remove="true" />
+	<logout wait="0" hup="yes" term="yes" kill="yes" />
 
-  <volume sgrp="gloja 5" fstype="cifs" server="berlim" path="Dbclipper\PESSOAL" mountpoint="~/Publico_LJ05" />
-  <volume sgrp="gloja 1" fstype="cifs" server="berlim" path="01" mountpoint="~/Publico_LJ01" />
-  <volume sgrp="gloja 2" fstype="cifs" server="berlim" path="02" mountpoint="~/Publico_LJ02" />
-  <volume sgrp="gloja 7" fstype="cifs" server="berlim" path="07" mountpoint="~/Publico_LJ07" />
-  <volume sgrp="gloja 8" fstype="cifs" server="berlim" path="08" mountpoint="~/Publico_LJ08" />
-  <volume sgrp="gloja 11" fstype="cifs" server="berlim" path="11" mountpoint="~/Publico_LJ011" />
+	<!-- DECLARE HERE YOUR VOLUMES ("<volume... />" tags)! -->
+	
+  <volume sgrp="gloja 5" fstype="cifs" server="192.168.10.240" path="Dbclipper\PESSOAL" mountpoint="~/Publico_LJ05" />
+	<volume sgrp="gloja 1" fstype="cifs" server="192.168.10.240" path="01" mountpoint="~/Publico_LJ01" />
+	<volume sgrp="gloja 2" fstype="cifs" server="192.168.10.240" path="02" mountpoint="~/Publico_LJ02" />
+	<volume sgrp="gloja 7" fstype="cifs" server="192.168.10.240" path="07" mountpoint="~/Publico_LJ07" />
+	<volume sgrp="gloja 8" fstype="cifs" server="192.168.10.240" path="08" mountpoint="~/Publico_LJ08" />
+	<volume sgrp="gloja 11" fstype="cifs" server="192.168.10.240" path="11" mountpoint="~/Publico_LJ011" />
+
 </pam_mount>
 ```
 
