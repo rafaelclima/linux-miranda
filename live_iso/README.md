@@ -353,6 +353,79 @@ main
 
 -----
 
+-----
+
+## 3\. 📂 Posicionamento do Script de Instalação no ISO Live
+
+O arquivo `Instalador.sh` deve ser incluído na sua imagem base do Linux Mint em um local que **não será excluído** pelo Systemback e que seja facilmente acessível na sessão Live.
+
+### 3.1. Localização Segura do Arquivo
+
+O Systemback, por padrão, exclui ou trata de forma especial os diretórios do usuário (como `/home/usuario` e `~/Desktop`). Para garantir que o script esteja acessível e seja preservado:
+
+| Arquivo | Localização Segura Sugerida |
+| :--- | :--- |
+| `Instalador.sh` | **`/opt/Instalador.sh`** |
+| `atalho.desktop` | **`/etc/skel/Desktop/Instalador.desktop`** |
+
+### 3.2. Inclusão do Script no Sistema Base
+
+Antes de gerar a imagem `.squashfs` com o Systemback, execute os seguintes passos na sua máquina base personalizada:
+
+#### Passo 1: Copie o Script para `/opt/`
+
+Coloque o script de instalação no diretório `/opt/` e torne-o executável.
+
+```bash
+# Na sua máquina base, antes de rodar o Systemback:
+sudo cp /caminho/do/Instalador.sh /opt/
+sudo chmod +x /opt/Instalador.sh
+```
+
+#### Passo 2: Crie o Atalho de Área de Trabalho (Desktop Shortcut)
+
+Para que o atalho apareça na Área de Trabalho de **qualquer novo usuário** criado na sessão Live (ou após a instalação, se você mantiver o usuário *Live*), use o diretório `/etc/skel/`.
+
+Crie o arquivo `Instalador.desktop` no diretório de *template* do usuário:
+
+```bash
+# Na sua máquina base, antes de rodar o Systemback:
+sudo mkdir -p /etc/skel/Desktop/
+
+# Crie o arquivo .desktop
+sudo tee /etc/skel/Desktop/Instalador.desktop <<EOF
+[Desktop Entry]
+Name=Instalador NFS
+Comment=Executa o script de instalação do sistema via NFS.
+Exec=sudo zenity --password | sudo -S /opt/Instalador.sh
+Icon=system-run
+Terminal=false
+Type=Application
+Categories=System;
+StartupNotify=true
+EOF
+
+# Garanta que seja executável (necessário para que o desktop o trate como launcher)
+sudo chmod +x /etc/skel/Desktop/Instalador.desktop
+```
+
+> **Explicação da linha `Exec`:** `Exec=sudo zenity --password | sudo -S /opt/Instalador.sh`
+>
+>   * Isto é essencial para que o script rode com privilégios de `root` ao ser clicado na sessão Live.
+>   * `zenity --password` abre uma caixa de diálogo para pedir a senha.
+>   * O `| sudo -S` permite que a senha fornecida pelo Zenity seja passada para o `sudo`, executando o `/opt/Instalador.sh` como `root`.
+
+#### Passo 3: Geração da Imagem Live
+
+Agora, você pode rodar o **Systemback** e criar o **Live system**.
+
+  * Certifique-se de que a opção **"Include user data files"** (Incluir arquivos de dados do usuário) esteja **DESMARCADA** no Systemback, a menos que você queira incluir os arquivos do usuário que está gerando a ISO.
+      * *Se esta opção estiver desmarcada,* o Systemback usa `/etc/skel` como base para os dados do usuário Live, garantindo que o atalho que você criou será incluído.
+
+Com isso, o script estará seguro em `/opt/` e o atalho estará visível na área de trabalho da sessão Live para iniciar a instalação.
+
+-----
+
 ## 4\. 🧰 Dependências no Ambiente de Instalação
 
 O ambiente Live que executa o `Instalador.sh` deve ter os seguintes pacotes instalados (o `check_dependencies` verifica isso):
