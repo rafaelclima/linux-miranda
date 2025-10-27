@@ -134,7 +134,9 @@ O script foi corrigido para:
 set -e
 
 # ==============================================================
-# 💾 INSTALADOR DE SISTEMA VIA REDE NFS (Versão Otimizada Final)
+# 💾 INSTALADOR DE SISTEMA VIA REDE NFS (Versão Final Otimizada)
+# Objetivo: Instalação robusta via PXE, com log, GUI Zenity e
+#           limpeza total do Systemback pós-extração.
 # ==============================================================
 
 # --- CONFIGURAÇÕES ---
@@ -160,6 +162,7 @@ err() { zenity --error --title="Erro Crítico" --text="$1" --width=450; exit 1; 
 cleanup() {
     local exit_code=$?
     echo "--- Executando limpeza de montagens temporárias... ---" | tee -a "$LOG_FILE"
+    
     mountpoint -q "$TARGET_MOUNT" && umount -Rl "$TARGET_MOUNT" 2>/dev/null || true
     mountpoint -q "$NFS_MOUNT" && umount "$NFS_MOUNT" 2>/dev/null || true
 
@@ -186,7 +189,6 @@ mount_nfs_share() {
 
 # --- ENTRADA DO USUÁRIO ---
 select_target_disk() {
-    # Lista Discos e Tamanhos em colunas separadas
     disks=$(lsblk -ndo NAME,SIZE,TYPE | awk '$3=="disk" {print "/dev/"$1, $2}')
     [ -z "$disks" ] && err "Nenhum disco físico foi encontrado."
 
@@ -203,26 +205,39 @@ select_target_disk() {
         --text="Você tem certeza que deseja APAGAR e FORMATAR o disco **$TARGET_DISK**?\n\nESTA AÇÃO É IRREVERSÍVEL!" --width=450 || err "Instalação cancelada"
 }
 
-# --- PREPARAÇÃO E EXTRAÇÃO (funções omitidas por brevidade, mas devem estar completas) ---
-
+# --- PREPARAÇÃO ---
 prepare_disk() {
-    # [...] Código de particionamento e formatação (GPT, EFI, ROOT)
     echo "Preparando disco $TARGET_DISK: Particionamento GPT e UEFI..." | tee -a "$LOG_FILE"
+    
     sgdisk --zap-all "$TARGET_DISK" || true
     parted -s "$TARGET_DISK" mklabel gpt
     parted -s "$TARGET_DISK" mkpart primary fat32 1MiB $EFI_SIZE
     parted -s "$TARGET_DISK" set 1 esp on
     parted -s "$TARGET_DISK" mkpart primary ext4 $EFI_SIZE 100%
-    partprobe "$TARGET_DISK"; sleep 2
+    partprobe "$TARGET_DISK"
+    sleep 2
 
-    if [[ "$TARGET_DISK" =~ nvme ]]; then EFI_PART="${TARGET_DISK}p1"; ROOT_PART="${TARGET_DISK}p2"; else EFI_PART="${TARGET_DISK}1"; ROOT_PART="${TARGET_DISK}2"; fi
+    if [[ "$TARGET_DISK" =~ nvme ]]; then
+        EFI_PART="${TARGET_DISK}p1"
+        ROOT_PART="${TARGET_DISK}p2"
+    else
+        EFI_PART="${TARGET_DISK}1"
+        ROOT_PART="${TARGET_DISK}2"
+    fi
 
-    mkfs.fat -F 32 -n EFI "$EFI_PART"; mkfs.ext4 -F -L $ROOT_LABEL "$ROOT_PART"
-    mkdir -p "$TARGET_MOUNT"; mount "$ROOT_PART" "$TARGET_MOUNT"
-    mkdir -p "$TARGET_MOUNT/boot/efi"; mount "$EFI_PART" "$TARGET_MOUNT/boot/efi"
+    echo "Formatando partições..." | tee -a "$LOG_FILE"
+    mkfs.fat -F 32 -n EFI "$EFI_PART"
+    mkfs.ext4 -F -L $ROOT_LABEL "$ROOT_PART"
+
+    mkdir -p "$TARGET_MOUNT"
+    mount "$ROOT_PART" "$TARGET_MOUNT"
+    
+    mkdir -p "$TARGET_MOUNT/boot/efi"
+    mount "$EFI_PART" "$TARGET_MOUNT/boot/efi"
     echo "Partições montadas com sucesso." | tee -a "$LOG_FILE"
 }
 
+# --- EXTRAÇÃO ---
 extract_system() {
     msg "Extraindo o sistema (isso pode levar alguns minutos)..."
     [ ! -f "$NFS_MOUNT/$SQUASHFS_FILE" ] && err "$SQUASHFS_FILE não encontrado em $NFS_MOUNT!"
@@ -232,41 +247,65 @@ extract_system() {
     local extract_pid=$!
     
     ( 
-        while kill -0 "$extract_pid" 2>/dev/null; do echo "# Extraindo $SQUASHFS_FILE. Em andamento..."; sleep 1; done
+        while kill -0 "$extract_pid" 2>/dev/null; do 
+            echo "# Extraindo $SQUASHFS_FILE. Em andamento..."
+            sleep 1
+        done
         wait "$extract_pid"
     ) | zenity --progress \
-        --title="Extração em Andamento" --text="Instalando sistema base..." \
+        --title="Extração em Andamento" \
+        --text="Instalando sistema base..." \
         --pulsate --auto-close --no-cancel --width=400
         
-    if [ $? -ne 0 ]; then err "Falha na extração do sistema. Verifique o log: $LOG_FILE"; fi
+    if [ $? -ne 0 ]; then
+        err "Falha na extração do sistema. Verifique o log: $LOG_FILE"
+    fi
 }
 
-# --- CONFIGURAÇÃO PÓS-EXTRAÇÃO E LIMPEZA ---
+# --- CONFIGURAÇÃO PÓS-EXTRAÇÃO E LIMPEZA (CORRIGIDA) ---
 configure_system() {
-    echo "Iniciando configuração de fstab, GRUB e limpeza do Systemback..." | tee -a "$LOG_FILE"
+    echo "Iniciando configuração de fstab, GRUB e limpeza completa do Systemback..." | tee -a "$LOG_FILE"
     
+    # 1. fstab e Montagens Chroot
     genfstab -U "$TARGET_MOUNT" > "$TARGET_MOUNT/etc/fstab"
-    for dir in dev sys proc; do mount --bind /$dir "$TARGET_MOUNT/$dir"; done
+    for dir in dev sys proc; do
+        mount --bind /$dir "$TARGET_MOUNT/$dir"
+    done
 
-    # Criação do Script de GRUB e Limpeza Interna
+    # 2. Criação do Script de GRUB e Limpeza Interna
     cat <<EOF > "$TARGET_MOUNT/tmp/chroot_grub.sh"
 #!/bin/bash
 set -e
-echo "Configurando GRUB e limpando Systemback..."
+echo "Configurando GRUB e limpando Systemback profundamente..."
 
-# Remoção Completa do Systemback (APT PURGE)
+# A. Remoção Completa do Systemback (APT PURGE)
 if command -v systemback >/dev/null 2>&1; then
     apt update >> /dev/null 2>&1
-    # apt purge remove o pacote e seus arquivos de configuração
     apt purge -y systemback >> /dev/null 2>&1
     apt autoremove -y >> /dev/null 2>&1
-    echo "Systemback removido com sucesso."
+    echo "Systemback removido via APT."
 fi
 
-# Instalação e atualização do GRUB (UEFI/BIOS fallback)
-# OBS: $TARGET_DISK é passado via variável de ambiente, mas não está disponível no chroot,
-# Usamos /dev/sda por ser comum, ou o script deve ser ajustado para passar o nome correto do disco.
-# Para este cenário, presumimos que o disco principal é o /dev/sda ou o script chamador garante $TARGET_DISK.
+# B. Limpeza Profunda de Resíduos (CRUCIAL PARA O ERRO NO LOGIN)
+echo "Removendo serviços, temporários, logs e autostart residuais do Systemback..."
+
+# B.1. Remoção dos Arquivos de Autostart de Sessão
+# Estes arquivos causam a tentativa de iniciar o agendador no login gráfico (sbschedule.desktop)
+rm -f /etc/xdg/autostart/sbschedule.desktop
+rm -f /etc/xdg/autostart/sbschedule-kde.desktop
+rm -f /etc/xdg/autostart/systemback.desktop
+
+# B.2. Limpeza de Daemons e Configurações de Serviço
+rm -f /etc/systemd/system/systemback-scheduler.service
+rm -f /etc/init.d/systemback-schedule
+rm -rf /var/log/systemback
+rm -rf /var/cache/systemback
+rm -rf /root/systemback*
+
+# B.3. Recarrega o systemd para garantir que o serviço seja desabilitado
+systemctl daemon-reload
+
+# C. Instalação e atualização do GRUB
 if grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=LinuxMintUEFI --recheck; then
     echo "GRUB UEFI instalado com sucesso."
 elif grub-install --target=i386-pc $TARGET_DISK --recheck; then
@@ -281,10 +320,11 @@ update-grub
 echo "Configuração do GRUB e limpeza concluídas."
 EOF
 
+    # 3. Execução do Chroot
     chmod +x "$TARGET_MOUNT/tmp/chroot_grub.sh"
-    # Passamos TARGET_DISK para o ambiente chroot para uso no grub-install
     chroot "$TARGET_MOUNT" /bin/bash -c "TARGET_DISK='$TARGET_DISK' /tmp/chroot_grub.sh" >> "$LOG_FILE" 2>&1 || err "Falha na configuração interna. Verifique o log."
     
+    # 4. Limpeza
     rm "$TARGET_MOUNT/tmp/chroot_grub.sh"
 }
 
